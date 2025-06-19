@@ -162,7 +162,7 @@ async function main() {
     const body = {
       model: process.env.OPENAI_MODEL || 'gpt-3.5-turbo-0125',
       messages,
-      tools: Object.values(TOOLS),
+      tools: Object.values(TOOLS).map((t) => ({ type: 'function', function: t })),
       tool_choice: 'auto'
     } as any;
 
@@ -176,12 +176,17 @@ async function main() {
     });
 
     const data = await resp.json();
-    const message = 'choices' in data ? data.choices[0].message : data.message;
-    const finishReason = 'choices' in data ? data.choices[0].finish_reason : (data.done ? 'stop' : (message.tool_calls ? 'tool_calls' : 'stop'));
+    if (!resp.ok) {
+      console.error('API error', resp.status, data?.error?.message || data);
+      break;
+    }
 
-    if (finishReason === 'tool_calls' && Array.isArray(message.tool_calls)) {
+    const message = data.choices?.[0]?.message || data.message;
+    const finishReason = data.choices?.[0]?.finish_reason ?? (data.done ? 'stop' : (message?.tool_calls ? 'tool_calls' : 'stop'));
+
+    if (finishReason === 'tool_calls' && Array.isArray(message?.tool_calls)) {
       messages.push(message);
-      for (const call of message.tool_calls) {
+      for (const call of message!.tool_calls) {
         const func = call.function.name as string;
         let args: any = {};
         try {
@@ -193,7 +198,7 @@ async function main() {
         messages.push({ role: 'tool', tool_call_id: call.id, name: func, content: result } as any);
       }
     } else {
-      console.log(message.content);
+      console.log(message?.content || '');
       break;
     }
   }
