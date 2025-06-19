@@ -162,7 +162,7 @@ async function main() {
     const body = {
       model: process.env.OPENAI_MODEL || 'gpt-3.5-turbo-0125',
       messages,
-      tools: Object.values(TOOLS),
+      tools: Object.values(TOOLS).map((t) => ({ type: 'function', function: t })),
       tool_choice: 'auto'
     } as any;
 
