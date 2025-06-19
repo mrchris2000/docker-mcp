@@ -1,7 +1,6 @@
 import fs from 'fs/promises';
 import { exec, spawn } from 'child_process';
 import { promisify } from 'util';
-import OpenAI from 'openai';
 
 const execAsync = promisify(exec);
 
@@ -151,47 +150,50 @@ async function main() {
   }
 
   const apiKey = process.env.OPENAI_API_KEY || '';
-  const baseURL = process.env.OPENAI_BASE_URL;
-  if (!apiKey && !baseURL) {
-    console.log('Set OPENAI_API_KEY or OPENAI_BASE_URL to reach a provider');
-    return;
-  }
 
-  const client = new OpenAI({ apiKey, baseURL });
+  const baseURL = process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1';
 
   const messages: any[] = [
-    { role: 'system', content: 'You are a helpful agent with access to tools.' },
+    { role: 'system', content: 'You are a helpful agent with access to tools. Whenever possible, use the available tools to perform actions rather than describing the steps.' },
     { role: 'user', content: prompt }
   ];
 
   for (let i = 0; i < 10; i++) {
-    const resp = await client.chat.completions.create({
+    const body = {
       model: process.env.OPENAI_MODEL || 'gpt-3.5-turbo-0125',
       messages,
-      functions: Object.values(TOOLS) as any,
-      function_call: 'auto'
+      tools: Object.values(TOOLS),
+      tool_choice: 'auto'
+    } as any;
+
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
+
+    const resp = await fetch(`${baseURL}/chat/completions`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body)
     });
 
-    const choice = resp.choices[0];
+    const data = await resp.json();
+    const message = 'choices' in data ? data.choices[0].message : data.message;
+    const finishReason = 'choices' in data ? data.choices[0].finish_reason : (data.done ? 'stop' : (message.tool_calls ? 'tool_calls' : 'stop'));
 
-    if (choice.finish_reason === 'stop') {
-      console.log(choice.message.content);
-      break;
-    }
-
-    if (choice.finish_reason === 'function_call' && choice.message.function_call) {
-      const func = choice.message.function_call.name;
-      let args: any = {};
-      try {
-        args = JSON.parse(choice.message.function_call.arguments || '{}');
-      } catch {
-        args = {};
+    if (finishReason === 'tool_calls' && Array.isArray(message.tool_calls)) {
+      messages.push(message);
+      for (const call of message.tool_calls) {
+        const func = call.function.name as string;
+        let args: any = {};
+        try {
+          args = JSON.parse(call.function.arguments || '{}');
+        } catch {
+          args = {};
+        }
+        const result = await (FUNCTION_MAP[func] ? FUNCTION_MAP[func](args) : Promise.resolve('Unknown function'));
+        messages.push({ role: 'tool', tool_call_id: call.id, name: func, content: result } as any);
       }
-      const result = await (FUNCTION_MAP[func] ? FUNCTION_MAP[func](args) : Promise.resolve('Unknown function'));
-      messages.push(choice.message as any);
-      messages.push({ role: 'function', name: func, content: result } as any);
     } else {
-      console.log(choice.message.content);
+      console.log(message.content);
       break;
     }
   }
