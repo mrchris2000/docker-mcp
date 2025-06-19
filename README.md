@@ -2,6 +2,8 @@
 
 This repository provides a minimal container image that runs an LLM agent with access to a few tools. The agent is implemented in TypeScript using OpenAI's Chat API. Pass an initial prompt when starting the container and the agent will attempt to complete it while calling the tools when appropriate.
 
+The agent relies on the model's tool calling capability. Use a model that supports this feature and phrase your prompt so the agent knows it should take actions (e.g. "create a file named hello.txt containing 'hi'"). The system prompt encourages tool use, so the model should invoke the appropriate functions instead of simply describing the steps.
+
 ## Building the image
 
 ```bash

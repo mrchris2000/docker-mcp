@@ -160,7 +160,7 @@ async function main() {
   const client = new OpenAI({ apiKey, baseURL });
 
   const messages: any[] = [
-    { role: 'system', content: 'You are a helpful agent with access to tools.' },
+    { role: 'system', content: 'You are a helpful agent with access to tools. Whenever possible, use the available tools to perform actions rather than describing the steps.' },
     { role: 'user', content: prompt }
   ];
 
@@ -168,8 +168,8 @@ async function main() {
     const resp = await client.chat.completions.create({
       model: process.env.OPENAI_MODEL || 'gpt-3.5-turbo-0125',
       messages,
-      functions: Object.values(TOOLS) as any,
-      function_call: 'auto'
+      tools: Object.values(TOOLS) as any,
+      tool_choice: 'auto'
     });
 
     const choice = resp.choices[0];
@@ -179,17 +179,20 @@ async function main() {
       break;
     }
 
-    if (choice.finish_reason === 'function_call' && choice.message.function_call) {
-      const func = choice.message.function_call.name;
-      let args: any = {};
-      try {
-        args = JSON.parse(choice.message.function_call.arguments || '{}');
-      } catch {
-        args = {};
-      }
-      const result = await (FUNCTION_MAP[func] ? FUNCTION_MAP[func](args) : Promise.resolve('Unknown function'));
+    const toolCalls = (choice.message as any).tool_calls;
+    if (choice.finish_reason === 'tool_calls' && Array.isArray(toolCalls)) {
       messages.push(choice.message as any);
-      messages.push({ role: 'function', name: func, content: result } as any);
+      for (const call of toolCalls) {
+        const func = call.function.name as string;
+        let args: any = {};
+        try {
+          args = JSON.parse(call.function.arguments || '{}');
+        } catch {
+          args = {};
+        }
+        const result = await (FUNCTION_MAP[func] ? FUNCTION_MAP[func](args) : Promise.resolve('Unknown function'));
+        messages.push({ role: 'tool', tool_call_id: call.id, name: func, content: result } as any);
+      }
     } else {
       console.log(choice.message.content);
       break;
