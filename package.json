@@ -1,0 +1,17 @@
+{
+  "name": "docker-mcp",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/agent.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/agent.js"
+  },
+  "dependencies": {
+    "openai": "^5.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.3",
+    "typescript": "^5.3.2"
+  }
+}

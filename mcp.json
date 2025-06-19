@@ -1,0 +1,14 @@
+{
+  "servers": {
+    "sample": {
+      "command": "node",
+      "args": ["./tools/sample-server.js"]
+    }
+  },
+  "tools": {
+    "echo": {
+      "command": "echo",
+      "args": []
+    }
+  }
+}
