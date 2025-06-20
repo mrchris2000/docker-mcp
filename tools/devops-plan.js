@@ -3,8 +3,7 @@
 import { McpServer, ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-const { Builder, By, Key, until, Actions } = pkg;
-import { application } from "express";
+
 
 
 // Create an MCP server
@@ -16,7 +15,6 @@ const server = new McpServer({
 const personal_access_token_string = "Y2hyaXN0b3BoZXIuaGFnZ2FuQGNvbXBhbnkuY29tOmFlOTNhMGVlLTQ3NmQtNDgwYy04ZGMxLWQ2MTE5NWY5NDgwYzpEZW1vTDo3NTg0ZTQxNi02ODczLTQ4MTAtOTdlYy1kZjIzZGRkY2Y2Nzk6-9b5QnQUNcq9oSwpxxv9uYWMQaJ5G3c7bWqsxB6l4ULilai-WxXBh5BK3jHwwBpFiFzITgYvcfX6bE52MuqXqUb4nBcF5COUP08YswPeqNGcL93Dip1uToxF-LaikEfzImmP5zcu8dvrw3W3IAwZDeGyd0AqQixhf7d--ZMj4K8=";
 const serverURL = "https://devops-automation.platform-staging1.us-east.containers.appdomain.cloud/plan";
 const teamspaceID = "b9705781-6e45-48fd-83fa-c9b226f0e711";
-//const projectId = "VBooking";
 var globalCookies = "";
 
 async function getCookiesFromServer(serverURL) {
@@ -401,9 +399,10 @@ server.tool(
         title: z.string().describe("Title of the work item"),
         description: z.string().describe("Description of the work item"),
         workItemType: z.string().describe("Type of the work item from the list of available work item types"),
-        application: z.string().describe("Name of the application")
+        application: z.string().describe("Name of the application"),
+        projectId: z.string().describe("ID of the project")
     },
-    async ({ component, title, description, workItemType, application }) => {
+    async ({ component, title, description, workItemType, application, projectId }) => {
         try {
             if (!globalCookies) {
                 globalCookies = await getCookiesFromServer(serverURL);
@@ -461,8 +460,9 @@ server.tool(
     "Retrieves all work items for a given application",
     {
         applicationName: z.string().describe("Name of the application"),
+        projectId: z.string().describe("ID of the project")
     },
-    async ({ applicationName }) => {
+    async ({ applicationName, projectId }) => {
         try {
             if (!globalCookies) {
                 globalCookies = await getCookiesFromServer(serverURL);
@@ -564,9 +564,10 @@ server.tool(
     "delete_work_item",
     "Deletes a work item in Plan",
     {
-        workItemId: z.string().describe("ID of the work item to delete")
+        workItemId: z.string().describe("ID of the work item to delete"),
+        application: z.string().describe("Name of the application")
     },
-    async ({ workItemId }) => {
+    async ({ workItemId, application }) => {
         try {
             if (!globalCookies) {
                 globalCookies = await getCookiesFromServer(serverURL);
