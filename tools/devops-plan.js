@@ -212,7 +212,9 @@ server.tool(
                     content: [{ type: 'text', text: `Components retrieved: ${JSON.stringify(componentNames)}` }]
                 };
             } else {
-                throw new Error("Failed to retrieve components");
+                return {
+                    content: [{ type: 'text', text: `No components retrieved.` }]
+                };
             }
         } catch (e) {
             return {
@@ -314,7 +316,7 @@ server.tool(
     "create_work_item",
     "Creates a new work item in Plan",
     {
-        component: z.string().describe("A component name from the list of components in the project"),
+        component: z.string().describe("A component name from the list of components in the project, this may be blank.").default(""),
         title: z.string().describe("Title of the work item"),
         description: z.string().describe("Description of the work item"),
         workItemType: z.string().describe("Type of the work item from the list of available work item types"),
