@@ -7,7 +7,9 @@
     "build": "tsc",
     "start": "node dist/agent.js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.7.0"
+  },
   "devDependencies": {
     "@types/node": "^24.0.3",
     "typescript": "^5.3.2"

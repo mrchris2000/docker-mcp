@@ -2,13 +2,21 @@
   "servers": {
     "sample": {
       "command": "node",
-      "args": ["./tools/sample-server.js"]
+      "args": [
+        "./tools/sample-server.js"
+      ]
     }
   },
   "tools": {
     "echo": {
       "command": "echo",
       "args": []
+    },
+    "plan": {
+      "command": "node",
+      "args": [
+        "./tools/devops-plan.js"
+      ]
     }
   }
 }
