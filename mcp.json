@@ -16,7 +16,8 @@
       "command": "node",
       "args": [
         "./tools/devops-plan.js"
-      ]
+      ],
+      "mcp": true
     }
   }
 }

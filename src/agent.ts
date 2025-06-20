@@ -1,6 +1,8 @@
 import fs from 'fs/promises';
 import { exec, spawn } from 'child_process';
 import { promisify } from 'util';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 
 const execAsync = promisify(exec);
 
@@ -99,7 +101,7 @@ async function httpRequest(method: string, url: string, body: string | undefined
 const MCP_CONFIG_PATH = './mcp.json';
 type MCPConfig = {
   servers?: Record<string, { command: string; args?: string[] }>;
-  tools?: Record<string, { command: string; args?: string[] }>;
+  tools?: Record<string, { command: string; args?: string[]; mcp?: boolean }>;
 };
 
 function startServers(config: MCPConfig): void {
@@ -120,30 +122,48 @@ async function main() {
     const text = await fs.readFile(MCP_CONFIG_PATH, 'utf8');
     const cfg: MCPConfig = JSON.parse(text);
     startServers(cfg);
-    const tools = cfg.tools as Record<string, { command: string; args?: string[] }> | undefined;
+    const tools = cfg.tools as Record<string, { command: string; args?: string[]; mcp?: boolean }> | undefined;
     for (const [name, tool] of Object.entries(tools || {})) {
-      TOOLS[name] = {
-        name,
-        description: `Run ${name} tool`,
-        parameters: {
-          type: 'object',
-          properties: {
-            args: { type: 'string', description: 'Arguments to pass' }
-          },
-          required: []
+      if (tool.mcp) {
+        const client = new Client({ name, version: '1.0.0' });
+        const transport = new StdioClientTransport({ command: tool.command, args: tool.args ?? [] });
+        await client.connect(transport);
+        const serverTools = await client.listTools();
+        for (const st of serverTools.tools) {
+          TOOLS[st.name] = {
+            name: st.name,
+            description: st.description ?? '',
+            parameters: st.inputSchema ?? { type: 'object', properties: {}, required: [] }
+          };
+          FUNCTION_MAP[st.name] = async (args: any) => {
+            const res = await client.callTool({ name: st.name, arguments: args });
+            return JSON.stringify(res);
+          };
         }
-      };
-      FUNCTION_MAP[name] = async (args: any) => {
-        const extra = args.args ? String(args.args) : '';
-        const cmd = tool.command;
-        const cmdArgs = [...(tool.args || []), ...(extra ? [extra] : [])];
-        try {
-          const { stdout, stderr } = await execAsync([cmd, ...cmdArgs].join(' '));
-          return stdout + stderr;
-        } catch (err: any) {
-          return String(err);
-        }
-      };
+      } else {
+        TOOLS[name] = {
+          name,
+          description: `Run ${name} tool`,
+          parameters: {
+            type: 'object',
+            properties: {
+              args: { type: 'string', description: 'Arguments to pass' }
+            },
+            required: []
+          }
+        };
+        FUNCTION_MAP[name] = async (args: any) => {
+          const extra = args.args ? String(args.args) : '';
+          const cmd = tool.command;
+          const cmdArgs = [...(tool.args || []), ...(extra ? [extra] : [])];
+          try {
+            const { stdout, stderr } = await execAsync([cmd, ...cmdArgs].join(' '));
+            return stdout + stderr;
+          } catch (err: any) {
+            return String(err);
+          }
+        };
+      }
     }
   } catch {
     // ignore missing config
