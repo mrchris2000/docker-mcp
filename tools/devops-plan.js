@@ -135,7 +135,7 @@ server.tool(
     }
 )
 
-// Tool to create a work item in Plan
+// Tool to get available components for a project in Plan
 server.tool(
     "get_available_components",
     "Get the list of components for a project in Plan for a given application",
@@ -167,9 +167,7 @@ server.tool(
                     ],
                     filterNode: {
                         boolOp: "BOOL_OP_AND",
-                        fieldFilters: [
-                            { fieldPath: "dbid", compOp: "COMP_OP_IN", values: ["33554532", "33554531"] }
-                        ],
+                        fieldFilters: [],
                         childFilterNodes: []
                     }
                 },
@@ -224,7 +222,7 @@ server.tool(
     }
 )
 
-    // Tool to create a work item in Plan
+// Tool to get available work item types for a project in Plan
 server.tool(
     "get_available_workitem_types",
     "Get the available workitem types for a project in Plan for a given application",
@@ -527,6 +525,7 @@ server.tool(
     }
 );
 
+//Tool to retrieve all applications from Plan
 server.tool(
     "get_applications",
     "Retrieves all applications from the Plan system",
