@@ -564,8 +564,7 @@ server.tool(
 
                 return {
                     content: [
-                        { type: 'text', text: `Applications retrieved: ${JSON.stringify(applications)}` },
-                        { type: 'json', json: applications }
+                        { type: 'text', text: `Applications retrieved: ${JSON.stringify(applications)}` }
                     ]
                 };
             } else {
