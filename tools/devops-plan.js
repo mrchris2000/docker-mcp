@@ -14,7 +14,7 @@ const server = new McpServer({
 
 const personal_access_token_string = "Y2hyaXN0b3BoZXIuaGFnZ2FuQGNvbXBhbnkuY29tOmFlOTNhMGVlLTQ3NmQtNDgwYy04ZGMxLWQ2MTE5NWY5NDgwYzpEZW1vTDo3NTg0ZTQxNi02ODczLTQ4MTAtOTdlYy1kZjIzZGRkY2Y2Nzk6-9b5QnQUNcq9oSwpxxv9uYWMQaJ5G3c7bWqsxB6l4ULilai-WxXBh5BK3jHwwBpFiFzITgYvcfX6bE52MuqXqUb4nBcF5COUP08YswPeqNGcL93Dip1uToxF-LaikEfzImmP5zcu8dvrw3W3IAwZDeGyd0AqQixhf7d--ZMj4K8=";
 const serverURL = "https://devops-automation.platform-staging1.us-east.containers.appdomain.cloud/plan";
-const teamspaceID = "b9705781-6e45-48fd-83fa-c9b226f0e711";
+const teamspaceID = "7584e416-6873-4810-97ec-df23dddcf679";
 var globalCookies = "";
 
 async function getCookiesFromServer(serverURL) {
@@ -52,88 +52,6 @@ async function cleanup() {
 process.on('SIGTERM', cleanup);
 process.on('SIGINT', cleanup);
 
-// Tool to get projects from Plan
-server.tool(
-    "deploy_application",
-    "Deploy a specified appliction to a given environment, optionally with a specific version or snapshot",
-    {
-        application: z.string().describe("Name of the application"),
-        environment: z.string().describe("Name of the environment"),
-        versionSnap: z.string().describe("Version or snapshot of the application").optional()
-    },
-    async ({ application }) => {
-        try {
-            if (!globalCookies) {
-                globalCookies = await getCookiesFromServer(serverURL);
-                if (!globalCookies) {
-                    console.error("Failed to retrieve cookies from server.");
-                    return { error: "Failed to retrieve cookies." };
-                }
-                console.log("Received Cookies:", globalCookies);
-            } else {
-                console.log("Reusing Stored Cookies:", globalCookies);
-            }
-
-            const queryPayload = {
-                queryDef: {
-                    primaryEntityDefName: "Project",
-                    queryFieldDefs: [
-                        { fieldPathName: "dbid", isShown: true, sortType: "SORT_DESC" },
-                        { fieldPathName: "Name", isShown: true },
-                        { fieldPathName: "DescriptionPT", isShown: true }
-                    ],
-                    filterNode: {
-                        boolOp: "BOOL_OP_AND",
-                        fieldFilters: [],
-                        childFilterNodes: []
-                    }
-                },
-                resultSetOptions: {}
-            };
-
-            const queryResponse = await fetch(`${serverURL}/deploy?app=sdfdsfds`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Basic ${personal_access_token_string}`,
-                    'Cookie': globalCookies
-                },
-                body: JSON.stringify(queryPayload)
-            });
-
-            const queryData = await queryResponse.json();
-            const resultSetId = queryData.result_set_id;
-
-            if (!resultSetId) {
-                throw new Error("Failed to retrieve result set ID");
-            }
-
-            const projectsResponse = await fetch(`${serverURL}/ccmweb/rest/repos/${teamspaceID}/databases/${application}/query/${resultSetId}?pageNumber=1`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Basic ${personal_access_token_string}`,
-                    'Cookie': globalCookies
-                }
-            });
-
-            const projectsData = await projectsResponse.json();
-
-            if (projectsData && projectsData.rows) {
-                const projectNames = projectsData.rows.map(row => row.displayName);
-                return {
-                    content: [{ type: 'text', text: `Projects retrieved: ${JSON.stringify(projectNames)}` }]
-                };
-            } else {
-                throw new Error("Failed to retrieve projects");
-            }
-        } catch (e) {
-            return {
-                content: [{ type: 'text', text: `Error retrieving projects: ${e.message}` }]
-            };
-        }
-    }
-)
 // Start the server
 // Tool to get projects from Plan
 server.tool(
@@ -143,6 +61,7 @@ server.tool(
         application: z.string().describe("Name of the application")
     },
     async ({ application }) => {
+        console.log("GetProjects: Received Application Name:", application);
         try {
             if (!globalCookies) {
                 globalCookies = await getCookiesFromServer(serverURL);
@@ -225,6 +144,7 @@ server.tool(
         projectId: z.string().describe("ID of the project")
     },
     async ({ application, projectId }) => {
+        console.log("GetComponents: Received Application Name:", application);
         try {
             if (!globalCookies) {
                 globalCookies = await getCookiesFromServer(serverURL);
@@ -313,6 +233,7 @@ server.tool(
         projectId: z.string().describe("ID of the project")
     },
     async ({ application }) => {
+        console.log("GetWorkItemTypes: Received Application Name:", application);
         try {
             if (!globalCookies) {
                 globalCookies = await getCookiesFromServer(serverURL);
@@ -403,6 +324,7 @@ server.tool(
         projectId: z.string().describe("ID of the project")
     },
     async ({ component, title, description, workItemType, application, projectId }) => {
+        console.log("CreateWorkItem: Received Application Name:", application);
         try {
             if (!globalCookies) {
                 globalCookies = await getCookiesFromServer(serverURL);
@@ -463,6 +385,7 @@ server.tool(
         projectId: z.string().describe("ID of the project")
     },
     async ({ applicationName, projectId }) => {
+        console.log("GetWorkItems: Received Application Name:", applicationName);
         try {
             if (!globalCookies) {
                 globalCookies = await getCookiesFromServer(serverURL);
@@ -568,6 +491,7 @@ server.tool(
         application: z.string().describe("Name of the application")
     },
     async ({ workItemId, application }) => {
+        console.log("DeleteWorkItem: Received Work Item ID:", workItemId);
         try {
             if (!globalCookies) {
                 globalCookies = await getCookiesFromServer(serverURL);
@@ -608,6 +532,7 @@ server.tool(
     "Retrieves all applications from the Plan system",
     {},
     async () => {
+        console.log("GetApplications: Retrieving applications from Plan");
         try {
             if (!globalCookies) {
                 globalCookies = await getCookiesFromServer(serverURL);
