@@ -1,23 +1,50 @@
 {
   "servers": {
-    "sample": {
-      "command": "node",
+    "plan": {
+      "command": "npx",
       "args": [
-        "./tools/sample-server.js"
-      ]
-    }
+        "-y",
+        "@securedevops/mcp-devops-plan"
+      ],
+      "env": {
+        "PLAN_ACCESS_TOKEN": "Y2hyaXN0b3BoZXIuaGFnZ2FuQGNvbXBhbnkuY29tOmFlOTNhMGVlLTQ3NmQtNDgwYy04ZGMxLWQ2MTE5NWY5NDgwYzpEZW1vTDo3NTg0ZTQxNi02ODczLTQ4MTAtOTdlYy1kZjIzZGRkY2Y2Nzk6-9b5QnQUNcq9oSwpxxv9uYWMQaJ5G3c7bWqsxB6l4ULilai-WxXBh5BK3jHwwBpFiFzITgYvcfX6bE52MuqXqUb4nBcF5COUP08YswPeqNGcL93Dip1uToxF-LaikEfzImmP5zcu8dvrw3W3IAwZDeGyd0AqQixhf7d--ZMj4K8=",
+        "PLAN_SERVER_URL": "https://devops-automation.platform-staging1.us-east.containers.appdomain.cloud/plan",
+        "PLAN_TEAMSPACE_ID": "7584e416-6873-4810-97ec-df23dddcf679"
+      }
+    },
+    "test": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@securedevops/mcp-devops-test"
+      ],
+      "env": {
+        "TEST_ACCESS_TOKEN": "eyJhbGciOiJIUzUxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJiZjUxN2E4Mi1hMDYyLTRhYWUtOWI5Yy0zODg3NjUwYTZjNzMifQ.eyJpYXQiOjE3NTI5MzUwMzEsImp0aSI6ImU0ZjQ3NmFiLWQ0YTgtNDJmMi05YWZlLTdhMzYzZmJjNmYyOSIsImlzcyI6Imh0dHBzOi8vZGV2b3BzLWF1dG9tYXRpb24ucGxhdGZvcm0tc3RhZ2luZzEudXMtZWFzdC5jb250YWluZXJzLmFwcGRvbWFpbi5jbG91ZC9hdXRoL3JlYWxtcy9kZXZvcHMtYXV0b21hdGlvbiIsImF1ZCI6Imh0dHBzOi8vZGV2b3BzLWF1dG9tYXRpb24ucGxhdGZvcm0tc3RhZ2luZzEudXMtZWFzdC5jb250YWluZXJzLmFwcGRvbWFpbi5jbG91ZC9hdXRoL3JlYWxtcy9kZXZvcHMtYXV0b21hdGlvbiIsInN1YiI6IjI5YjVkN2E5LWY1ZGQtNDc0Ny1iMzZmLWU0Y2YxMmIxZWI5NSIsInR5cCI6Ik9mZmxpbmUiLCJhenAiOiJ0ZXN0c2VydmVyIiwic2lkIjoiMjJlNjIxNWEtZDc1NS00Yzk0LTk2OTQtM2JhMjQyNmEzM2E2Iiwic2NvcGUiOiJzZXJ2aWNlX2FjY291bnQgcm9sZXMgcHJvZmlsZSBiYXNpYyBvZmZsaW5lX2FjY2VzcyBlbWFpbCB3ZWItb3JpZ2lucyBhY3IifQ.GMkVlhFnl04ierVG3JAgm3gFF369bE3IbYIU8cp5ql5WtpxEghC6vZ9hMZueK5KsaXbWgZHGMoC-UrdcBOYnMQ",
+        "TEST_SERVER_URL": "https://devops-automation.platform-staging1.us-east.containers.appdomain.cloud/test/#",
+        "TEST_TEAMSPACE_ID": "s7584e4166873481097ecdf23dddcf679",
+        "KEYCLOAK_CLIENT_ID": "testserver",
+        "KEYCLOAK_CLIENT_SECRET": "edc4b57ac090f8135171a1c29b4eb411cd763f6fdd17d533de0f5a120a6b1a6a"
+      }
+    },
+    "memory": {
+			"command": "npx",
+			"args": [
+				"-y",
+				"@modelcontextprotocol/server-memory"
+			]
+		},
+		"sequential-thinking": {
+			"command": "npx",
+			"args": [
+				"-y",
+				"@modelcontextprotocol/server-sequential-thinking"
+			]
+		}
   },
   "tools": {
     "echo": {
       "command": "echo",
       "args": []
-    },
-    "plan": {
-      "command": "node",
-      "args": [
-        "./tools/devops-plan.js"
-      ],
-      "mcp": true
     }
   }
 }

@@ -58,7 +58,7 @@ server.tool(
     "get_available_projects",
     "Get the list of projects in Plan for a given application",
     {
-        application: z.string().describe("Name of the application")
+        application: z.string().describe("Name of the plan application")
     },
     async ({ application }) => {
         console.log("GetProjects: Received Application Name:", application);
@@ -205,20 +205,20 @@ server.tool(
             });
 
             const componentsData = await componentsResponse.json();
-
+            
             if (componentsData && componentsData.rows) {
                 const componentNames = componentsData.rows.map(row => row.displayName);
                 return {
                     content: [{ type: 'text', text: `Components retrieved: ${JSON.stringify(componentNames)}` }]
                 };
-            } else {
+            } else if( componentsData.length === 0) {
                 return {
-                    content: [{ type: 'text', text: `No components retrieved.` }]
+                    content: [{ type: 'text', text: `Components retrieved: ${JSON.stringify("[]")}` }]
                 };
             }
         } catch (e) {
             return {
-                content: [{ type: 'text', text: `Error retrieving components: ${e.message}` }]
+                content: [{ type: 'text', text: `Components retrieved: ${JSON.stringify("[]")}` }]
             };
         }
     }
@@ -316,14 +316,14 @@ server.tool(
     "create_work_item",
     "Creates a new work item in Plan",
     {
-        component: z.string().describe("A component name from the list of components in the project, this may be blank.").default(""),
+        component: z.string().optional().describe("An optional component name if any are available in the project, this is not required."),
         title: z.string().describe("Title of the work item"),
         description: z.string().describe("Description of the work item"),
         workItemType: z.string().describe("Type of the work item from the list of available work item types"),
         application: z.string().describe("Name of the application"),
         projectId: z.string().describe("ID of the project")
     },
-    async ({ component, title, description, workItemType, application, projectId }) => {
+    async ({component, title, description, workItemType, application, projectId }) => {
         console.log("CreateWorkItem: Received Application Name:", application);
         try {
             if (!globalCookies) {
@@ -337,8 +337,11 @@ server.tool(
                 console.log("Reusing Stored Cookies:", globalCookies);
             }
             let bodyJSON = JSON.parse(createWorkItemBody);
-            bodyJSON.fields[0].value = component;
-            bodyJSON.fields[0].valueAsList[0] = component;
+            if(component !== undefined){
+                // Use empty string if not provided
+                bodyJSON.fields[0].value = component || "";
+                bodyJSON.fields[0].valueAsList[0] = component || "";
+            } 
             bodyJSON.fields[2].value = projectId;
             bodyJSON.fields[2].valueAsList[0] = projectId;
             bodyJSON.fields[4].value = title;
@@ -592,14 +595,14 @@ const createWorkItemBody = `
   "fields": [
       {
       "name": "Component",
-      "value": "Devops Extension",
+      "value": "",
       "valueStatus": "HAS_VALUE",
       "validationStatus": "_KNOWN_VALID",
       "requiredness": "READONLY",
       "requirednessForUser": "READONLY",
       "type": "REFERENCE",
       "valueAsList": [
-        "Devops Extension"
+        ""
       ],
       "messageText": "",
       "maxLength": 0
