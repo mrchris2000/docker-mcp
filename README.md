@@ -8,12 +8,13 @@ The agent relies on the model's tool calling capability. Use a model that suppor
 
 ## Features
 
-- **Enhanced Reasoning Mode**: Multi-step analysis, self-reflection, and proactive task completion (like GitHub Copilot)
-- **Interactive Mode**: Continuously accept commands via command-line interface with unlimited conversation history
-- **Single Command Mode**: Execute one command and exit (original behavior)
-- **MCP Tool Support**: Integrates with MCP servers for extended functionality
-- **Docker Support**: Runs reliably in containerized environment
-- **Conversation Management**: History tracking with validation and integrity checks
+- **🌐 Web-Based Chat Interface**: Modern, responsive web UI with real-time WebSocket communication  
+- **🧠 Enhanced Reasoning Mode**: Multi-step analysis, self-reflection, and proactive task completion (like GitHub Copilot)
+- **💬 Interactive CLI Mode**: Command-line interface with unlimited conversation history
+- **⚡ Single Command Mode**: Execute one command and exit (original behavior)
+- **🔧 MCP Tool Support**: Integrates with MCP servers for extended functionality
+- **🐳 Docker Support**: Runs reliably in containerized environment
+- **📊 Conversation Management**: History tracking with validation and integrity checks
 
 ## Enhanced vs Simple Mode
 

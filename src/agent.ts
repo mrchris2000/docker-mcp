@@ -411,6 +411,7 @@ Continue working until you've fully addressed the user's needs.`
 
 async function main() {
   const interactiveMode = process.argv.includes('--interactive') || process.argv.includes('-i');
+  const webMode = process.argv.includes('--web') || process.argv.includes('-w');
   const showHelp = process.argv.includes('--help') || process.argv.includes('-h');
   const enhancedMode = process.argv.includes('--enhanced') || process.argv.includes('-e');
   const simpleMode = process.argv.includes('--simple') || process.argv.includes('-s');
@@ -422,6 +423,8 @@ async function main() {
     console.log('Usage:');
     console.log('  agent --interactive          Run in interactive mode');
     console.log('  agent -i                     Run in interactive mode (short)');
+    console.log('  agent --web                  Run web-based chat interface');
+    console.log('  agent -w                     Run web-based chat interface (short)');
     console.log('  agent --enhanced             Enable enhanced reasoning (default in interactive)');
     console.log('  agent -e                     Enable enhanced reasoning (short)');
     console.log('  agent --simple               Disable enhanced reasoning');
@@ -438,6 +441,12 @@ async function main() {
     console.log('  /simple                      Toggle simple mode');
     console.log('  exit, quit                   Exit the agent');
     console.log('');
+    console.log('Web Mode:');
+    console.log('  Starts a web server on port 3000 with chat interface');
+    console.log('  Access via http://localhost:3000');
+    console.log('  Features real-time WebSocket communication');
+    console.log('  Supports all interactive commands via web UI');
+    console.log('');
     console.log('Enhanced Mode Features:');
     console.log('  - Multi-step reasoning and analysis');
     console.log('  - Self-reflection on results');
@@ -451,12 +460,13 @@ async function main() {
     console.log('');
     console.log('Examples:');
     console.log('  agent --interactive --enhanced');
+    console.log('  agent --web                          # Start web interface');
     console.log('  agent "Analyze the project structure and suggest improvements"');
     return;
   }
   
-  if (!interactiveMode && !prompt) {
-    console.log('Usage: agent "<initial prompt>" or agent --interactive');
+  if (!interactiveMode && !webMode && !prompt) {
+    console.log('Usage: agent "<initial prompt>" or agent --interactive or agent --web');
     console.log('Use --help for more information');
     return;
   }
@@ -471,6 +481,34 @@ async function main() {
 
   const apiKey = process.env.OPENAI_API_KEY || '';
   const baseURL = process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1';
+
+  if (webMode) {
+    // Dynamic import to avoid TypeScript errors during compilation
+    const { WebServer } = await import('./web-server.js');
+    
+    const webServer = new WebServer({
+      port: 3000,
+      processPromptFunction: processPrompt,
+      tools: TOOLS,
+      apiKey,
+      baseURL
+    });
+
+    console.log('🌐 Starting web-based chat interface...');
+    console.log('💡 Available tools:', Object.keys(TOOLS).join(', '));
+    console.log('📝 Enhanced reasoning enabled by default');
+    
+    await webServer.start();
+    
+    // Keep the process running
+    process.on('SIGINT', async () => {
+      console.log('\n👋 Shutting down web server...');
+      await webServer.stop();
+      process.exit(0);
+    });
+    
+    return; // Don't continue to other modes
+  }
 
   if (interactiveMode) {
     // Default to enhanced mode in interactive, unless simple mode is explicitly requested

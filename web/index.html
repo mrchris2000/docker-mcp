@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker MCP Agent - Web Chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4CAF50;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .mode-indicator {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+        
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px 20px 0 0;
+            overflow: hidden;
+        }
+        
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message.user {
+            background: #2196F3;
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        
+        .message.agent {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            align-self: flex-start;
+        }
+        
+        .message.system {
+            background: rgba(76, 175, 80, 0.2);
+            color: white;
+            align-self: center;
+            font-style: italic;
+            text-align: center;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+        
+        .message.error {
+            background: rgba(244, 67, 54, 0.2);
+            color: white;
+            align-self: center;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+        
+        .message.thinking {
+            background: rgba(255, 193, 7, 0.2);
+            color: white;
+            align-self: center;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            animation: pulse 1.5s infinite;
+        }
+        
+        .input-container {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .input-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+        
+        .input-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .quick-commands {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .quick-command {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 4px 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        
+        .quick-command:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+        
+        #messageInput {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            resize: none;
+            outline: none;
+            font-family: inherit;
+            font-size: 14px;
+            min-height: 40px;
+            max-height: 120px;
+        }
+        
+        #sendButton {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            height: fit-content;
+        }
+        
+        #sendButton:hover:not(:disabled) {
+            background: #45a049;
+            transform: translateY(-1px);
+        }
+        
+        #sendButton:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        
+        .typing-indicator {
+            display: none;
+            padding: 10px;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .typing-indicator.show {
+            display: block;
+        }
+        
+        .tools-info {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .chat-container {
+                border-radius: 0;
+            }
+            
+            .message {
+                max-width: 95%;
+            }
+            
+            .input-container {
+                padding: 15px;
+            }
+            
+            .quick-commands {
+                order: -1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🤖 Docker MCP Agent</h1>
+        <div class="status">
+            <div class="status-indicator"></div>
+            <span id="statusText">Connecting...</span>
+            <div class="mode-indicator" id="modeIndicator">Enhanced Mode</div>
+            <div class="tools-info" id="toolsInfo">Loading tools...</div>
+        </div>
+    </div>
+    
+    <div class="chat-container">
+        <div class="messages" id="messages"></div>
+        
+        <div class="input-container">
+            <div class="input-row">
+                <div class="input-area">
+                    <div class="quick-commands">
+                        <button class="quick-command" onclick="sendCommand('tools')">🔧 Tools</button>
+                        <button class="quick-command" onclick="sendCommand('history')">📊 History</button>
+                        <button class="quick-command" onclick="sendCommand('enhanced')">🧠 Enhanced</button>
+                        <button class="quick-command" onclick="sendCommand('simple')">⚡ Simple</button>
+                        <button class="quick-command" onclick="sendCommand('clear')">🧹 Clear</button>
+                    </div>
+                    <textarea 
+                        id="messageInput" 
+                        placeholder="Type your message here... (Shift+Enter for new line, Enter to send)"
+                        rows="1"
+                    ></textarea>
+                </div>
+                <button id="sendButton" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let ws = null;
+        let isConnected = false;
+
+        // DOM elements
+        const messagesContainer = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const statusText = document.getElementById('statusText');
+        const modeIndicator = document.getElementById('modeIndicator');
+        const toolsInfo = document.getElementById('toolsInfo');
+
+        // Initialize WebSocket connection
+        function connectWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}`;
+            
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                isConnected = true;
+                statusText.textContent = 'Connected';
+                statusText.style.color = '#4CAF50';
+                sendButton.disabled = false;
+                console.log('WebSocket connected');
+            };
+
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    handleMessage(data);
+                } catch (error) {
+                    console.error('Failed to parse WebSocket message:', error);
+                }
+            };
+
+            ws.onclose = () => {
+                isConnected = false;
+                statusText.textContent = 'Disconnected';
+                statusText.style.color = '#f44336';
+                sendButton.disabled = true;
+                console.log('WebSocket disconnected');
+                
+                // Attempt to reconnect after 3 seconds
+                setTimeout(connectWebSocket, 3000);
+            };
+
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                addMessage('error', 'Connection error occurred');
+            };
+        }
+
+        function handleMessage(data) {
+            switch (data.type) {
+                case 'system':
+                    addMessage('system', data.message);
+                    if (data.tools) {
+                        toolsInfo.textContent = `${data.tools.length} tools available`;
+                    }
+                    if (data.mode) {
+                        updateModeIndicator(data.mode);
+                    }
+                    break;
+
+                case 'thinking':
+                    addMessage('thinking', data.message);
+                    break;
+
+                case 'response_chunk':
+                    addMessage('agent', data.message);
+                    break;
+
+                case 'response_complete':
+                    addMessage('system', data.message);
+                    break;
+
+                case 'error':
+                    addMessage('error', data.message);
+                    break;
+
+                default:
+                    console.log('Unknown message type:', data.type);
+            }
+        }
+
+        function addMessage(type, content) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = content;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message || !isConnected) return;
+
+            // Add user message to chat
+            addMessage('user', message);
+
+            // Send to server
+            ws.send(JSON.stringify({
+                type: 'chat',
+                content: message
+            }));
+
+            // Clear input
+            messageInput.value = '';
+            adjustTextareaHeight();
+        }
+
+        function sendCommand(command) {
+            if (!isConnected) return;
+
+            ws.send(JSON.stringify({
+                type: 'command',
+                content: command
+            }));
+        }
+
+        function updateModeIndicator(mode) {
+            modeIndicator.textContent = mode === 'enhanced' ? '🧠 Enhanced Mode' : '⚡ Simple Mode';
+        }
+
+        function adjustTextareaHeight() {
+            messageInput.style.height = 'auto';
+            messageInput.style.height = Math.min(messageInput.scrollHeight, 120) + 'px';
+        }
+
+        // Event listeners
+        messageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        messageInput.addEventListener('input', adjustTextareaHeight);
+
+        // Initialize connection
+        connectWebSocket();
+
+        // Example prompts for demonstration
+        const examplePrompts = [
+            "List the files in the current directory",
+            "Analyze the project structure and suggest improvements", 
+            "Check the system status and resources",
+            "Create a backup of important files"
+        ];
+
+        // Add some example prompts as system messages after connection
+        setTimeout(() => {
+            if (isConnected) {
+                addMessage('system', '💡 Try these example prompts:');
+                examplePrompts.forEach(prompt => {
+                    const exampleDiv = document.createElement('div');
+                    exampleDiv.className = 'message system';
+                    exampleDiv.textContent = `"${prompt}"`;
+                    exampleDiv.style.cursor = 'pointer';
+                    exampleDiv.style.opacity = '0.8';
+                    exampleDiv.onclick = () => {
+                        messageInput.value = prompt;
+                        adjustTextareaHeight();
+                        messageInput.focus();
+                    };
+                    messagesContainer.appendChild(exampleDiv);
+                });
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        }, 2000);
+    </script>
+</body>
+</html>
