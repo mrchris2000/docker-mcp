@@ -39,7 +39,44 @@ Set your OpenAI API key:
 export OPENAI_API_KEY="your-api-key-here"
 ```
 
-### Interactive Mode with Enhanced Reasoning (Recommended!)
+### 🌐 Web-Based Chat Interface (New & Recommended!)
+
+The web interface provides the best user experience with real-time chat, enhanced reasoning, and a modern UI.
+
+**Windows (PowerShell):**
+```powershell
+.\run-web.ps1
+```
+
+**Linux/macOS:**
+```bash
+chmod +x run-web.sh
+./run-web.sh
+```
+
+**Manual Docker run:**
+```bash
+docker run --rm -it -p 3000:3000 \
+  -e OPENAI_API_KEY="your-key" \
+  -e OPENAI_BASE_URL="https://api.openai.com/v1" \
+  -e OPENAI_MODEL="gpt-4" \
+  docker-mcp --web
+```
+
+Then open your browser to: **http://localhost:3000**
+
+#### Web Interface Features:
+- 🎨 **Modern UI**: Beautiful, responsive design that works on desktop and mobile
+- ⚡ **Real-time Communication**: WebSocket-based instant messaging  
+- 🧠 **Enhanced Mode by Default**: Multi-step reasoning and self-reflection
+- 🔧 **Quick Commands**: Buttons for tools, history, mode switching, and clearing
+- 📱 **Mobile Friendly**: Works great on phones and tablets
+- 🎯 **Example Prompts**: Click-to-use example commands to get started
+- 📊 **Live Status**: Connection status, mode indicator, and tools counter
+
+### 💬 Interactive CLI Mode
+
+Best for terminal users who prefer command-line interfaces.
 
 **Windows (PowerShell):**
 ```powershell
