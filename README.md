@@ -73,6 +73,11 @@ Then open your browser to: **http://localhost:3000**
 - 📱 **Mobile Friendly**: Works great on phones and tablets
 - 🎯 **Example Prompts**: Click-to-use example commands to get started
 - 📊 **Live Status**: Connection status, mode indicator, and tools counter
+- ✨ **Rich Text Formatting**: Enhanced presentation with syntax highlighting, code blocks, and structured output
+- 🛠️ **Tool Call Highlighting**: Visual indicators for different types of operations (file operations, shell commands, MCP tools)
+- 📄 **Code & JSON Formatting**: Automatic formatting of code blocks, JSON responses, and command outputs
+- 🤔 **Thinking Indicators**: Clear visual cues when the agent is analyzing or processing
+- 📋 **Structured Lists**: Proper formatting for bullet points, numbered lists, and step-by-step processes
 
 ### 💬 Interactive CLI Mode
 
@@ -162,11 +167,32 @@ I notice some performance issues, let me analyze the system resources...
 [Agent provides optimization recommendations]
 ```
 
-**🔍 Follow-up Actions**: Automatically performs related tasks:
-- Validation of completed actions
-- Related file checks
-- Error prevention measures
-- Performance optimizations
+### 🎨 Enhanced Message Formatting
+
+The web interface now provides rich, readable formatting for all types of responses:
+
+#### **Code & Technical Content**
+- **Code blocks**: Syntax-highlighted code with proper monospace fonts
+- **Inline code**: Highlighted `inline code` snippets  
+- **JSON responses**: Pretty-printed with proper indentation
+- **Command output**: Styled terminal-like blocks with success/error indicators
+
+#### **Tool Operations**
+- **🔧 Tool Execution**: Clear visual indicators for shell commands, file operations
+- **📄 File Operations**: Distinct styling for read/write operations with file content blocks
+- **🔗 MCP Tools**: Special formatting for Model Context Protocol tool calls
+- **❌ Error Messages**: Highlighted error outputs with clear visual distinction
+
+#### **Agent Reasoning**
+- **🤔 Thinking Steps**: Visual indicators for analysis and reasoning phases
+- **📋 Step-by-step Lists**: Properly formatted bullet points and numbered lists  
+- **📊 Structured Data**: Tables and organized information display
+- **💡 Headers & Sections**: Clear typography hierarchy for different content types
+
+#### **Real-time Features**
+- **⚡ Streaming responses**: Messages appear as the agent processes them
+- **🔄 Thinking indicators**: Live feedback showing when the agent is working
+- **📱 Mobile optimized**: All formatting works perfectly on mobile devices
 
 ### Conversation History
 

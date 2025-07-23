@@ -93,6 +93,206 @@
             border-radius: 18px;
             word-wrap: break-word;
             animation: fadeIn 0.3s ease-in;
+            white-space: pre-wrap;
+            font-family: inherit;
+            line-height: 1.4;
+        }
+        
+        .message.agent {
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            align-self: flex-start;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .message.agent pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.3;
+            color: #333;
+        }
+        
+        .message.agent code {
+            background: #f1f3f4;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #d73a49;
+        }
+        
+        .message.agent pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+        
+        .message.agent .command-output {
+            background: #f8f9fa;
+            border-left: 4px solid #28a745;
+            padding: 8px 12px;
+            margin: 8px 0;
+            border-radius: 0 4px 4px 0;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+        }
+        
+        .message.agent .error-output {
+            background: #fff5f5;
+            border-left: 4px solid #dc3545;
+            padding: 8px 12px;
+            margin: 8px 0;
+            border-radius: 0 4px 4px 0;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            color: #721c24;
+        }
+        
+        .message.agent .file-content {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.3;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .message.agent .tool-call {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f1f8ff 100%);
+            border-left: 4px solid #2196F3;
+            padding: 8px 12px;
+            margin: 8px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9em;
+            color: #1565c0;
+        }
+        
+        .message.agent .tool-call .tool-name {
+            font-weight: bold;
+            color: #0d47a1;
+        }
+        
+        .message.agent ul, .message.agent ol {
+            margin: 8px 0;
+            padding-left: 20px;
+        }
+        
+        .message.agent li {
+            margin: 4px 0;
+        }
+        
+        .message.agent h1, .message.agent h2, .message.agent h3 {
+            margin: 12px 0 8px 0;
+            color: #2c3e50;
+        }
+
+        .numbered-list {
+            margin: 12px 0;
+            padding: 0;
+        }
+
+        .numbered-item {
+            display: flex;
+            align-items: flex-start;
+            margin: 8px 0;
+            padding: 8px 12px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border-left: 3px solid #0969da;
+        }
+
+        .item-number {
+            font-weight: 600;
+            color: #0969da;
+            margin-right: 8px;
+            min-width: 24px;
+        }
+
+        .item-name {
+            flex: 1;
+            font-weight: 500;
+            color: #24292f;
+        }
+
+        .item-type {
+            font-size: 12px;
+            color: #656d76;
+            background-color: #e1e4e8;
+            padding: 2px 6px;
+            border-radius: 12px;
+            margin-left: 8px;
+        }
+
+        .test-list {
+            margin: 12px 0;
+        }
+
+        .step-indicator {
+            background-color: #f0f8ff;
+            border-left: 4px solid #0969da;
+            padding: 8px 12px;
+            margin: 8px 0;
+            border-radius: 0 6px 6px 0;
+            font-style: italic;
+        }
+        
+        .message.agent h1 {
+            font-size: 1.2em;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 4px;
+        }
+        
+        .message.agent h2 {
+            font-size: 1.1em;
+            color: #34495e;
+        }
+        
+        .message.agent h3 {
+            font-size: 1.05em;
+            color: #7f8c8d;
+        }
+        
+        .message.agent blockquote {
+            border-left: 4px solid #3498db;
+            padding-left: 12px;
+            margin: 8px 0;
+            font-style: italic;
+            color: #666;
+        }
+        
+        .message.agent .json-output {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .message.agent .step-indicator {
+            background: linear-gradient(135deg, #fff3cd 0%, #fefcf3 100%);
+            border-left: 4px solid #ffc107;
+            padding: 6px 10px;
+            margin: 6px 0;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.9em;
+            color: #856404;
+            font-weight: 500;
         }
         
         @keyframes fadeIn {
@@ -293,6 +493,7 @@
     <script>
         let ws = null;
         let isConnected = false;
+        let currentThinkingMessage = null;
 
         // DOM elements
         const messagesContainer = document.getElementById('messages');
@@ -356,18 +557,41 @@
                     break;
 
                 case 'thinking':
-                    addMessage('thinking', data.message);
+                    currentThinkingMessage = addMessage('thinking', data.message);
                     break;
 
                 case 'response_chunk':
-                    addMessage('agent', data.message);
+                    // Remove thinking message when first response chunk arrives
+                    if (data.isFirst && currentThinkingMessage) {
+                        currentThinkingMessage.remove();
+                        currentThinkingMessage = null;
+                    }
+                    
+                    // Check if this chunk should be combined with the previous agent message
+                    const lastMessage = messagesContainer.lastElementChild;
+                    if (lastMessage && lastMessage.classList.contains('agent')) {
+                        // Append to existing message
+                        const existingContent = lastMessage.innerHTML;
+                        lastMessage.innerHTML = existingContent + '<br>' + formatAgentMessage(data.message);
+                    } else {
+                        // Create new agent message
+                        addMessage('agent', data.message);
+                    }
                     break;
 
                 case 'response_complete':
+                    if (currentThinkingMessage) {
+                        currentThinkingMessage.remove();
+                        currentThinkingMessage = null;
+                    }
                     addMessage('system', data.message);
                     break;
 
                 case 'error':
+                    if (currentThinkingMessage) {
+                        currentThinkingMessage.remove();
+                        currentThinkingMessage = null;
+                    }
                     addMessage('error', data.message);
                     break;
 
@@ -379,10 +603,137 @@
         function addMessage(type, content) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${type}`;
-            messageDiv.textContent = content;
+            
+            if (type === 'agent') {
+                messageDiv.innerHTML = formatAgentMessage(content);
+            } else {
+                messageDiv.textContent = content;
+            }
             
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            return messageDiv; // Return the element for potential manipulation
+        }
+
+        function formatAgentMessage(content) {
+            // Handle different types of content formatting
+            let formatted = content;
+            
+            // Detect and format JSON output
+            if (content.trim().startsWith('{') && content.trim().endsWith('}')) {
+                try {
+                    const jsonObj = JSON.parse(content);
+                    return `<div class="json-output">${escapeHtml(JSON.stringify(jsonObj, null, 2))}</div>`;
+                } catch(e) {
+                    // Not valid JSON, continue with other formatting
+                }
+            }
+            
+            // Format numbered lists (like "1. ItemName (Type: ABC) 2. ItemName2 (Type: DEF)")
+            formatted = formatted.replace(
+                /(\d+)\.\s*([^()]+)(?:\(([^)]+)\))?\s*(?=\d+\.|$)/g,
+                '<div class="numbered-item"><span class="item-number">$1.</span> <span class="item-name">$2</span> <span class="item-type">($3)</span></div>'
+            );
+            
+            // If we found numbered items, wrap them in a container
+            if (formatted.includes('numbered-item')) {
+                formatted = `<div class="numbered-list">${formatted}</div>`;
+            }
+            
+            // Format test lists specifically (handle patterns like "Here are all the tests in the DemoLoop project:")
+            formatted = formatted.replace(
+                /Here are all the tests in the (\w+) project:\s*(.*)/gi,
+                '<h3>🧪 Tests in the $1 Project:</h3><div class="test-list">$2</div>'
+            );
+            
+            // Format command output blocks
+            formatted = formatted.replace(
+                /```(?:bash|shell|cmd)?\n([\s\S]*?)```/g, 
+                '<div class="command-output">$1</div>'
+            );
+            
+            // Format code blocks
+            formatted = formatted.replace(
+                /```(\w+)?\n([\s\S]*?)```/g, 
+                '<pre><code>$2</code></pre>'
+            );
+            
+            // Format inline code
+            formatted = formatted.replace(/`([^`]+)`/g, '<code>$1</code>');
+            
+            // Format tool calls (detect patterns like "Running tool: xyz")
+            formatted = formatted.replace(
+                /(Running|Using|Executing)\s+(tool|command|function):\s*([^\n]+)/gi,
+                '<div class="tool-call"><span class="tool-name">🔧 $1 $2:</span> $3</div>'
+            );
+            
+            // Format file content (detect patterns indicating file output)
+            formatted = formatted.replace(
+                /(File contents?|Reading file):\s*([^\n]*)\n([\s\S]*?)(?=\n\n|\n[A-Z]|\n$|$)/g,
+                '<div class="tool-call"><span class="tool-name">📄 $1:</span> $2</div><div class="file-content">$3</div>'
+            );
+            
+            // Format error messages
+            formatted = formatted.replace(
+                /(Error|Failed|Exception):\s*([^\n]+)/gi,
+                '<div class="error-output"><strong>❌ $1:</strong> $2</div>'
+            );
+            
+            // Format step indicators (detect thinking patterns)
+            formatted = formatted.replace(
+                /(Let me|I will|I should|Next,?\s*I|Now I|I'll|I'm going to)\s+([^\n]+)/gi,
+                '<div class="step-indicator">🤔 $1 $2</div>'
+            );
+            
+            // Format headers (lines that end with colon and are followed by content)
+            formatted = formatted.replace(
+                /^([A-Z][^:\n]{3,}):$/gm,
+                '<h3>$1:</h3>'
+            );
+            
+            // Format simple lists with dashes or asterisks
+            formatted = formatted.replace(
+                /^[\s]*[-\*]\s+(.+)$/gm,
+                '<li>$1</li>'
+            );
+            
+            // Wrap consecutive list items in ul tags
+            formatted = formatted.replace(
+                /(<li>.*<\/li>(?:\s*<li>.*<\/li>)*)/gs,
+                '<ul>$1</ul>'
+            );
+            
+            // Format numbered lists (simple format like "1. Item")
+            formatted = formatted.replace(
+                /^[\s]*(\d+)[\.\)]\s+(.+)$/gm,
+                '<li>$2</li>'
+            );
+            
+            // Convert line breaks to <br> tags, but preserve formatting within special blocks
+            const parts = formatted.split(/(<div[^>]*>[\s\S]*?<\/div>|<pre[^>]*>[\s\S]*?<\/pre>|<ul[^>]*>[\s\S]*?<\/ul>|<h\d[^>]*>[\s\S]*?<\/h\d>)/);
+            formatted = parts.map((part, index) => {
+                if (index % 2 === 0) {
+                    // This is regular text, convert line breaks
+                    return part.replace(/\n/g, '<br>');
+                } else {
+                    // This is a formatted block, leave as is
+                    return part;
+                }
+            }).join('');
+            
+            return formatted;
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
         }
 
         function sendMessage() {

@@ -182,18 +182,26 @@ export class WebServer {
     }));
 
     try {
-      // Create a custom response handler that streams responses back
+      // Create a custom response handler that streams responses back with better formatting
       let fullResponse = '';
       const originalConsoleLog = console.log;
+      let isFirstChunk = true;
       
       console.log = (...args) => {
         const message = args.join(' ');
         if (message && message.trim()) {
           fullResponse += message + '\n';
+          
+          // Format the message for better presentation
+          const formattedMessage = this.formatMessageForWeb(message);
+          
           ws.send(JSON.stringify({
             type: 'response_chunk',
-            message: message
+            message: formattedMessage,
+            isFirst: isFirstChunk
           }));
+          
+          isFirstChunk = false;
         }
         originalConsoleLog(...args);
       };
@@ -227,6 +235,55 @@ export class WebServer {
         message: `Error: ${error.message || error}`
       }));
     }
+  }
+
+  private formatMessageForWeb(message: string): string {
+    // Enhanced formatting for web display
+    let formatted = message;
+    
+    // Detect tool execution patterns
+    if (message.includes('shell:') || message.includes('Running command:')) {
+      formatted = `🔧 **Tool Execution:** ${message}`;
+    }
+    
+    // Detect file operations
+    if (message.includes('read_file:') || message.includes('Reading file:')) {
+      formatted = `📄 **File Operation:** ${message}`;
+    }
+    
+    if (message.includes('write_file:') || message.includes('Writing to:')) {
+      formatted = `✏️ **File Write:** ${message}`;
+    }
+    
+    // Detect MCP tool calls
+    if (message.includes('mcp_') || message.startsWith('{') && message.includes('"type"')) {
+      formatted = `🔧 **MCP Tool:** ${message}`;
+    }
+    
+    // Detect analysis or thinking patterns
+    const thinkingPatterns = [
+      'Let me', 'I will', 'I should', 'I need to', 'I\'ll', 'I\'m going to',
+      'Next,', 'Now I', 'To', 'Additionally', 'Furthermore', 'Also'
+    ];
+    
+    for (const pattern of thinkingPatterns) {
+      if (message.startsWith(pattern)) {
+        formatted = `🤔 **Analysis:** ${message}`;
+        break;
+      }
+    }
+    
+    // Format JSON responses
+    try {
+      if (message.trim().startsWith('{') && message.trim().endsWith('}')) {
+        const jsonObj = JSON.parse(message);
+        formatted = `\`\`\`json\n${JSON.stringify(jsonObj, null, 2)}\n\`\`\``;
+      }
+    } catch (e) {
+      // Not JSON, continue with original formatting
+    }
+    
+    return formatted;
   }
 
   public start(): Promise<void> {
