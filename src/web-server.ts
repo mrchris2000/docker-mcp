@@ -70,7 +70,7 @@ export class WebServer {
       // Send welcome message
       ws.send(JSON.stringify({
         type: 'system',
-        message: '🤖 Agent connected! Type your message below.',
+        message: '🤖 GitHub Copilot connected! Type your message below.',
         tools: Object.keys(this.tools),
         mode: 'enhanced'
       }));
@@ -177,8 +177,8 @@ export class WebServer {
     ws.send(JSON.stringify({
       type: 'thinking',
       message: isEnhanced 
-        ? `💭 Processing with ${conversationHistory.length} previous messages (enhanced mode)...`
-        : `💭 Processing with ${conversationHistory.length} previous messages (simple mode)...`
+        ? `🤔 Processing with ${conversationHistory.length} previous messages (enhanced mode)...`
+        : `🤔 Processing with ${conversationHistory.length} previous messages...`
     }));
 
     try {
@@ -238,12 +238,12 @@ export class WebServer {
   }
 
   private formatMessageForWeb(message: string): string {
-    // Enhanced formatting for web display
+    // Enhanced formatting for web display - matching VSCode Copilot patterns
     let formatted = message;
     
-    // Detect tool execution patterns
+    // Detect tool execution patterns (using VSCode Copilot style)
     if (message.includes('shell:') || message.includes('Running command:')) {
-      formatted = `🔧 **Tool Execution:** ${message}`;
+      formatted = `�️ **Tool Execution:** ${message}`;
     }
     
     // Detect file operations
@@ -255,22 +255,47 @@ export class WebServer {
       formatted = `✏️ **File Write:** ${message}`;
     }
     
-    // Detect MCP tool calls
+    // Detect MCP tool calls (using VSCode Copilot emoji style)
     if (message.includes('mcp_') || message.startsWith('{') && message.includes('"type"')) {
-      formatted = `🔧 **MCP Tool:** ${message}`;
+      formatted = `🛠️ **MCP Tool:** ${message}`;
     }
     
-    // Detect analysis or thinking patterns
+    // Detect analysis or thinking patterns (using VSCode Copilot style)
     const thinkingPatterns = [
       'Let me', 'I will', 'I should', 'I need to', 'I\'ll', 'I\'m going to',
-      'Next,', 'Now I', 'To', 'Additionally', 'Furthermore', 'Also'
+      'Next,', 'Now I', 'To', 'Additionally', 'Furthermore', 'Also',
+      'Based on', 'Looking at', 'I can see', 'It appears', 'I notice'
     ];
     
     for (const pattern of thinkingPatterns) {
       if (message.startsWith(pattern)) {
-        formatted = `🤔 **Analysis:** ${message}`;
+        formatted = `🤔 **Step:** ${message}`;
         break;
       }
+    }
+    
+    // Detect progress messages
+    if (message.includes('Processing') || message.includes('Working on') || 
+        message.includes('Getting ready') || message.includes('Almost ready')) {
+      formatted = `⏳ **Progress:** ${message}`;
+    }
+    
+    // Detect warnings or errors
+    if (message.includes('Error:') || message.includes('Failed:') || message.includes('Warning:')) {
+      formatted = `⚠️ **Notice:** ${message}`;
+    }
+    
+    // Detect successful operations
+    if (message.includes('Successfully') || message.includes('Complete') || 
+        message.includes('Done') || message.includes('Finished')) {
+      formatted = `✅ **Success:** ${message}`;
+    }
+    if (message.includes('read_file:') || message.includes('Reading file:')) {
+      formatted = `📄 **File Operation:** ${message}`;
+    }
+    
+    if (message.includes('write_file:') || message.includes('Writing to:')) {
+      formatted = `✏️ **File Write:** ${message}`;
     }
     
     // Format JSON responses

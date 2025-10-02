@@ -4,6 +4,7 @@ import { promisify } from 'util';
 import { createInterface } from 'readline';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
 
 const execAsync = promisify(exec);
 
@@ -181,7 +182,13 @@ function validateConversationHistory(history: any[]): any[] {
 
 const MCP_CONFIG_PATH = './mcp.json';
 type MCPConfig = {
-  servers?: Record<string, { command: string; args?: string[]; env?: Record<string, string> }>;
+  servers?: Record<string, { 
+    command?: string; 
+    args?: string[]; 
+    env?: Record<string, string>;
+    type?: 'sse';
+    url?: string;
+  }>;
   tools?: Record<string, { command: string; args?: string[]; mcp?: boolean }>;
 };
 
@@ -194,19 +201,34 @@ async function connectToMCPServers(config: MCPConfig): Promise<void> {
   for (const [serverName, serverConfig] of Object.entries(config.servers || {})) {
     try {
       console.log(`Connecting to MCP server: ${serverName}`);
-      const client = new Client({ name: serverName, version: '1.0.0' });
+      const client = new Client({ 
+        name: serverName, 
+        version: '1.0.0',
+        requestTimeout: 300000  // 5 minutes for browser automation tasks
+      });
       
-      // Create transport with environment variables if specified
-      const transportOptions: any = { 
-        command: serverConfig.command, 
-        args: serverConfig.args ?? [] 
-      };
+      let transport;
       
-      if (serverConfig.env) {
-        transportOptions.env = { ...process.env, ...serverConfig.env };
+      // Check if this is an SSE server
+      if (serverConfig.type === 'sse' && serverConfig.url) {
+        console.log(`  Using SSE transport for ${serverName} at ${serverConfig.url}`);
+        transport = new SSEClientTransport(new URL(serverConfig.url));
+      } else if (serverConfig.command) {
+        // Create stdio transport with environment variables if specified
+        const transportOptions: any = { 
+          command: serverConfig.command, 
+          args: serverConfig.args ?? [] 
+        };
+        
+        if (serverConfig.env) {
+          transportOptions.env = { ...process.env, ...serverConfig.env };
+        }
+        
+        transport = new StdioClientTransport(transportOptions);
+      } else {
+        console.error(`❌ Invalid configuration for MCP server ${serverName}: must have either 'command' or 'type: sse' with 'url'`);
+        continue;
       }
-      
-      const transport = new StdioClientTransport(transportOptions);
       
       // Add timeout for connection
       const connectPromise = client.connect(transport);
@@ -242,7 +264,11 @@ async function connectToMCPServers(config: MCPConfig): Promise<void> {
     if (tool.mcp) {
       try {
         console.log(`Connecting to MCP tool: ${name}`);
-        const client = new Client({ name, version: '1.0.0' });
+        const client = new Client({ 
+          name, 
+          version: '1.0.0',
+          requestTimeout: 300000  // 5 minutes for browser automation tasks
+        });
         const transport = new StdioClientTransport({ command: tool.command, args: tool.args ?? [] });
         
         // Add timeout for connection
@@ -300,7 +326,26 @@ async function connectToMCPServers(config: MCPConfig): Promise<void> {
 
 async function processPrompt(prompt: string, apiKey: string, baseURL: string, conversationHistory: any[] = [], enableSelfReflection: boolean = true): Promise<any[]> {
   const systemPrompt = enableSelfReflection 
-    ? `You are an intelligent agent with access to tools. You should:
+    ? `You are an AI programming assistant.
+When asked for your name, you must respond with "GitHub Copilot".
+Follow the user's requirements carefully & to the letter.
+Follow Microsoft content policies.
+Avoid content that violates copyrights.
+If you are asked to generate content that is harmful, hateful, racist, sexist, lewd, or violent, only respond with "Sorry, I can't assist with that."
+Keep your answers short and impersonal.
+
+You have access to a comprehensive Model Context Protocol (MCP) environment with multiple specialized tools and servers.
+You can help users with plan management, test execution, memory/knowledge management, sequential thinking, file operations, database queries, web automation, and more.
+
+The user works in an IDE called Visual Studio Code which has a concept for editors with open files, integrated unit test support, an output pane that shows the output of running the code as well as an integrated terminal.
+
+Use Markdown formatting in your answers.
+For code blocks use triple backticks to start and end.
+Avoid wrapping the whole response in triple backticks.
+
+The current date is ${new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}.
+
+You should:
 1. Analyze the user's request thoroughly
 2. Break down complex tasks into steps
 3. Execute tools to gather information or perform actions
@@ -316,7 +361,16 @@ When using tools, consider:
 - Can you provide more comprehensive assistance?
 
 Continue working until you've fully addressed the user's needs.`
-    : 'You are a helpful agent with access to tools. Whenever possible, use the available tools to perform actions rather than describing the steps.';
+    : `You are an AI programming assistant.
+When asked for your name, you must respond with "GitHub Copilot".
+Follow the user's requirements carefully & to the letter.
+Keep your answers short and impersonal.
+
+You have access to various MCP (Model Context Protocol) tools and servers.
+The user works in Visual Studio Code with integrated terminal and file management.
+Use Markdown formatting in your answers and available tools to perform actions.
+
+The current date is ${new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}.`;
 
   const messages: any[] = [
     { role: 'system', content: systemPrompt },
