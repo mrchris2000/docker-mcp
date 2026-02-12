@@ -203,8 +203,7 @@ async function connectToMCPServers(config: MCPConfig): Promise<void> {
       console.log(`Connecting to MCP server: ${serverName}`);
       const client = new Client({ 
         name: serverName, 
-        version: '1.0.0',
-        requestTimeout: 300000  // 5 minutes for browser automation tasks
+        version: '1.0.0'
       });
       
       let transport;
@@ -266,8 +265,7 @@ async function connectToMCPServers(config: MCPConfig): Promise<void> {
         console.log(`Connecting to MCP tool: ${name}`);
         const client = new Client({ 
           name, 
-          version: '1.0.0',
-          requestTimeout: 300000  // 5 minutes for browser automation tasks
+          version: '1.0.0'
         });
         const transport = new StdioClientTransport({ command: tool.command, args: tool.args ?? [] });
         

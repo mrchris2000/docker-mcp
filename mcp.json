@@ -1,17 +1,18 @@
 {
   "servers": {
     "plan": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@securedevops/mcp-devops-plan"
-      ],
-      "env": {
-        "PLAN_ACCESS_TOKEN": "Y2hyaXN0b3BoZXIuaGFnZ2FuQGNvbXBhbnkuY29tOmFlOTNhMGVlLTQ3NmQtNDgwYy04ZGMxLWQ2MTE5NWY5NDgwYzpEZW1vTDo3NTg0ZTQxNi02ODczLTQ4MTAtOTdlYy1kZjIzZGRkY2Y2Nzk6-9b5QnQUNcq9oSwpxxv9uYWMQaJ5G3c7bWqsxB6l4ULilai-WxXBh5BK3jHwwBpFiFzITgYvcfX6bE52MuqXqUb4nBcF5COUP08YswPeqNGcL93Dip1uToxF-LaikEfzImmP5zcu8dvrw3W3IAwZDeGyd0AqQixhf7d--ZMj4K8=",
-        "PLAN_SERVER_URL": "https://devops-automation.platform-staging1.us-east.containers.appdomain.cloud/plan",
-        "PLAN_TEAMSPACE_ID": "7584e416-6873-4810-97ec-df23dddcf679"
-      }
-    },
+			"command": "npx",
+			"args": [
+				"-y",
+				"@securedevops/mcp-devops-plan"
+			],
+			"env": {
+				"PLAN_ACCESS_TOKEN": "Y2hyaXN0b3BoZXIuaGFnZ2FuQGNvbXBhbnkuY29tOmQ3ODhkNWM2LWNmMjgtNDk0Yi04MWFlLTc1NzM4ZTBkYjljZDpEZW1vTDo5M2ExNjY2Zi03MmJmLTRhZDctOTgwNi0wNjJmOGUxYjdhOGI61KwoUX-RW72ugJBnpgHLNqN5RIr91uQUCf7s7aSXc1STLjo61jFEkRISiWokdmuSZZcuiqaN9iLKwp1wsCX76WUGHY6zlEVv2AG4dLy_hIkA77sElCuICXO7uj-2Y5An7eJsu1bTn3iF4ZHn72T1YSd7bsuCdvR7vB0I646JMsQ=",
+				"PLAN_SERVER_URL": "https://platform-staging.us-east.containers.appdomain.cloud/plan",
+				"PLAN_TEAMSPACE_ID": "93a1666f-72bf-4ad7-9806-062f8e1b7a8b"
+			},
+			"type": "stdio"
+		},
     "test": {
       "command": "npx",
       "args": [

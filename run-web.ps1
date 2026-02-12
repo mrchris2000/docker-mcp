@@ -19,7 +19,7 @@ Write-Host "⏹️  Press Ctrl+C to stop the server" -ForegroundColor Gray
 Write-Host ""
 
 docker run --rm -it `
-  -p 3000:3000 `
+  -p 3030:3000 `
   -e OPENAI_API_KEY="$env:OPENAI_API_KEY" `
   -e OPENAI_BASE_URL="$env:OPENAI_BASE_URL" `
   -e OPENAI_MODEL="$env:OPENAI_MODEL" `
