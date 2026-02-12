@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +11,7 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
             background: #1e1e1e;
@@ -19,185 +20,391 @@
             display: flex;
             flex-direction: column;
         }
-        
+
         .header {
-            background: #2d2d30;
-            border-bottom: 1px solid #3e3e42;
-            padding: 1rem 2rem;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            padding: 1.5rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 1.5rem;
+            box-shadow: var(--header-shadow);
+            transition: background var(--transition-speed) ease, box-shadow var(--transition-speed) ease, border-color var(--transition-speed) ease;
+            border-radius: 24px;
+            max-width: 1100px;
+            width: 100%;
+            margin: 1.5rem auto 0;
         }
-        
+
+        .header-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            align-items: flex-start;
+        }
+
         .header h1 {
-            color: #ffffff;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 600;
+            color: var(--color-text-primary);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 0.6rem;
         }
-        
+
         .status {
             display: flex;
             align-items: center;
-            gap: 15px;
-            color: #cccccc;
+            gap: 1rem;
+            flex-wrap: wrap;
+            color: var(--color-text-secondary);
         }
-        
+
         .status-indicator {
-            width: 10px;
-            height: 10px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
-            background: #4CAF50;
-            animation: pulse 2s infinite;
+            background: var(--color-warning);
+            box-shadow: 0 0 0 6px transparent;
+            transition: background var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
         }
-        
+
         @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
-        
+
+        .status-indicator--connecting {
+            background: var(--color-warning);
+            box-shadow: 0 0 0 6px var(--status-connecting-glow);
+            animation: pulse 1.8s infinite;
+        }
+
+        .status-indicator--connected {
+            background: var(--color-success);
+            box-shadow: 0 0 0 6px var(--status-connected-glow);
+        }
+
+        .status-indicator--disconnected {
+            background: var(--color-danger);
+            box-shadow: 0 0 0 6px var(--status-disconnected-glow);
+        }
+
+        .status-text {
+            font-weight: 600;
+            transition: color var(--transition-speed) ease;
+        }
+
+        .status-text--connecting {
+            color: var(--color-warning);
+        }
+
+        .status-text--connected {
+            color: var(--color-success);
+        }
+
+        .status-text--disconnected {
+            color: var(--color-danger);
+        }
+
         .mode-indicator {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
+            background: var(--color-tag-bg);
+            color: var(--color-tag-text);
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 500;
         }
-        
+
+        .tools-info {
+            font-size: 0.85rem;
+            color: var(--color-text-secondary);
+        }
+
+        .theme-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1rem;
+            border-radius: 999px;
+            border: 1px solid var(--color-border);
+            background: var(--color-elevated);
+            color: var(--color-text-primary);
+            cursor: pointer;
+            transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease, background var(--transition-speed) ease;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+        }
+
+        .theme-toggle:focus-visible {
+            outline: 2px solid var(--color-accent);
+            outline-offset: 2px;
+        }
+
+        .theme-toggle__icon {
+            font-size: 1.1rem;
+        }
+
+        .theme-toggle__text {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
         .chat-container {
             flex: 1;
             display: flex;
             flex-direction: column;
-            max-width: 1200px;
-            margin: 0 auto;
+            max-width: 1100px;
             width: 100%;
-            background: #252526;
-            border-radius: 0;
+            margin: 2rem auto 0;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 24px;
+            box-shadow: var(--shadow-soft);
             overflow: hidden;
+            transition: background var(--transition-speed) ease, border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
         }
-        
+
         .messages {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
+            padding: 2rem;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 1rem;
+            background: var(--color-elevated);
+            transition: background var(--transition-speed) ease;
         }
-        
+
+        .messages::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .messages::-webkit-scrollbar-thumb {
+            background: var(--color-border);
+            border-radius: 999px;
+        }
+
         .message {
             max-width: 80%;
-            padding: 12px 16px;
+            padding: 14px 18px;
             border-radius: 18px;
             word-wrap: break-word;
             animation: fadeIn 0.3s ease-in;
             white-space: pre-wrap;
             font-family: inherit;
-            line-height: 1.4;
+            line-height: 1.6;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            background: var(--message-user-bg);
+            color: var(--message-user-text);
+            align-self: flex-end;
+            margin-left: auto;
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.25);
+        }
+
         .message.agent {
-            background: #2d2d30;
-            color: #cccccc;
+            background: var(--message-agent-bg);
+            color: var(--message-agent-text);
             align-self: flex-start;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            border: 1px solid #3e3e42;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--color-border);
+            box-shadow: 0 10px 20px rgba(15, 23, 42, 0.18);
         }
-        
+
+        .message.system {
+            background: var(--message-system-bg);
+            color: var(--message-system-text);
+            align-self: center;
+            font-style: italic;
+            text-align: center;
+            border: 1px solid var(--color-border);
+        }
+
+        .message.error {
+            background: var(--message-error-bg);
+            color: var(--message-error-text);
+            align-self: center;
+            border: 1px solid var(--error-output-border);
+        }
+
+        .message.thinking {
+            background: var(--message-thinking-bg);
+            color: var(--message-thinking-text);
+            align-self: center;
+            border: 1px solid rgba(124, 58, 237, 0.4);
+            animation: pulse 1.5s infinite;
+        }
+
         .message.agent pre {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            padding: 12px;
-            margin: 8px 0;
+            background: var(--code-bg);
+            border: 1px solid var(--code-border);
+            border-radius: 12px;
+            padding: 14px;
+            margin: 10px 0;
             overflow-x: auto;
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             font-size: 0.9em;
-            line-height: 1.3;
-            color: #333;
+            line-height: 1.5;
+            color: var(--code-text);
         }
-        
-        .message.agent code {
-            background: #f1f3f4;
-            padding: 2px 4px;
-            border-radius: 4px;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 0.9em;
-            color: #d73a49;
-        }
-        
+
         .message.agent pre code {
             background: none;
             padding: 0;
             color: inherit;
         }
-        
+
+        .message.agent code {
+            background: var(--inline-code-bg);
+            color: var(--inline-code-text);
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
         .message.agent .command-output {
-            background: #f8f9fa;
-            border-left: 4px solid #28a745;
-            padding: 8px 12px;
-            margin: 8px 0;
-            border-radius: 0 4px 4px 0;
+            background: var(--command-output-bg);
+            border-left: 4px solid var(--command-output-border);
+            padding: 10px 14px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             font-size: 0.9em;
             white-space: pre-wrap;
         }
-        
+
         .message.agent .error-output {
-            background: #fff5f5;
-            border-left: 4px solid #dc3545;
-            padding: 8px 12px;
-            margin: 8px 0;
-            border-radius: 0 4px 4px 0;
+            background: var(--error-output-bg);
+            border-left: 4px solid var(--error-output-border);
+            padding: 10px 14px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             font-size: 0.9em;
             white-space: pre-wrap;
-            color: #721c24;
+            color: var(--message-error-text);
         }
-        
+
         .message.agent .file-content {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
+            background: var(--file-content-bg);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
             padding: 12px;
-            margin: 8px 0;
+            margin: 10px 0;
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             font-size: 0.9em;
-            line-height: 1.3;
-            max-height: 300px;
+            line-height: 1.5;
+            max-height: 320px;
             overflow-y: auto;
         }
-        
+
         .message.agent .tool-call {
-            background: linear-gradient(135deg, #e3f2fd 0%, #f1f8ff 100%);
-            border-left: 4px solid #2196F3;
+            background: var(--tool-call-bg);
+            border-left: 4px solid var(--color-accent);
+            padding: 10px 14px;
+            margin: 10px 0;
+            border-radius: 0 10px 10px 0;
+            font-size: 0.9em;
+            color: var(--tool-call-text);
+        }
+
+        .message.agent .tool-call .tool-name {
+            font-weight: 600;
+            color: var(--color-accent-strong);
+        }
+
+        .message.agent ul,
+        .message.agent ol {
+            margin: 10px 0 10px 1rem;
+            padding-left: 1rem;
+        }
+
+        .message.agent li {
+            margin: 6px 0;
+        }
+
+        .message.agent h1,
+        .message.agent h2,
+        .message.agent h3 {
+            margin: 14px 0 8px 0;
+            color: var(--color-text-primary);
+        }
+
+        .message.agent h1 {
+            font-size: 1.25em;
+            border-bottom: 2px solid var(--color-accent);
+            padding-bottom: 6px;
+        }
+
+        .message.agent h2 {
+            font-size: 1.12em;
+            color: var(--color-text-primary);
+        }
+
+        .message.agent h3 {
+            font-size: 1.05em;
+            color: var(--color-text-secondary);
+        }
+
+        .message.agent blockquote {
+            border-left: 4px solid var(--color-accent);
+            padding-left: 14px;
+            margin: 10px 0;
+            font-style: italic;
+            color: var(--color-text-secondary);
+        }
+
+        .message.agent .json-output {
+            background: var(--file-content-bg);
+            border-radius: 12px;
+            padding: 12px;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .message.agent .step-indicator {
+            background: var(--step-indicator-bg);
+            border-left: 4px solid var(--color-warning);
             padding: 8px 12px;
             margin: 8px 0;
             border-radius: 0 8px 8px 0;
-            font-size: 0.9em;
-            color: #1565c0;
-        }
-        
-        .message.agent .tool-call .tool-name {
-            font-weight: bold;
-            color: #0d47a1;
-        }
-        
-        .message.agent ul, .message.agent ol {
-            margin: 8px 0;
-            padding-left: 20px;
-        }
-        
-        .message.agent li {
-            margin: 4px 0;
-        }
-        
-        .message.agent h1, .message.agent h2, .message.agent h3 {
-            margin: 12px 0 8px 0;
-            color: #2c3e50;
+            font-size: 0.92em;
+            color: var(--step-indicator-text);
+            font-weight: 500;
+            font-style: normal;
         }
 
         .numbered-list {
@@ -209,31 +416,31 @@
             display: flex;
             align-items: flex-start;
             margin: 8px 0;
-            padding: 8px 12px;
-            background-color: #f8f9fa;
-            border-radius: 6px;
-            border-left: 3px solid #0969da;
+            padding: 10px 14px;
+            background-color: var(--numbered-item-bg);
+            border-radius: 10px;
+            border-left: 3px solid var(--numbered-item-border);
+            gap: 0.8rem;
         }
 
         .item-number {
-            font-weight: 600;
-            color: #0969da;
-            margin-right: 8px;
-            min-width: 24px;
+            font-weight: 700;
+            color: var(--numbered-item-number);
+            min-width: 28px;
         }
 
         .item-name {
             flex: 1;
-            font-weight: 500;
-            color: #24292f;
+            font-weight: 600;
+            color: var(--numbered-item-name);
         }
 
         .item-type {
-            font-size: 12px;
-            color: #656d76;
-            background-color: #e1e4e8;
-            padding: 2px 6px;
-            border-radius: 12px;
+            font-size: 0.75rem;
+            color: var(--numbered-item-type-text);
+            background-color: var(--numbered-item-type-bg);
+            padding: 2px 8px;
+            border-radius: 999px;
             margin-left: 8px;
         }
 
@@ -242,221 +449,179 @@
         }
 
         .step-indicator {
-            background-color: #f0f8ff;
-            border-left: 4px solid #0969da;
+            background: var(--step-indicator-bg);
+            border-left: 4px solid var(--color-warning);
             padding: 8px 12px;
             margin: 8px 0;
-            border-radius: 0 6px 6px 0;
+            border-radius: 0 8px 8px 0;
             font-style: italic;
+            color: var(--step-indicator-text);
         }
-        
-        .message.agent h1 {
-            font-size: 1.2em;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 4px;
-        }
-        
-        .message.agent h2 {
-            font-size: 1.1em;
-            color: #34495e;
-        }
-        
-        .message.agent h3 {
-            font-size: 1.05em;
-            color: #7f8c8d;
-        }
-        
-        .message.agent blockquote {
-            border-left: 4px solid #3498db;
-            padding-left: 12px;
-            margin: 8px 0;
-            font-style: italic;
-            color: #666;
-        }
-        
-        .message.agent .json-output {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 12px;
-            margin: 8px 0;
-            overflow-x: auto;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 0.9em;
-        }
-        
-        .message.agent .step-indicator {
-            background: linear-gradient(135deg, #fff3cd 0%, #fefcf3 100%);
-            border-left: 4px solid #ffc107;
-            padding: 6px 10px;
-            margin: 6px 0;
-            border-radius: 0 6px 6px 0;
-            font-size: 0.9em;
-            color: #856404;
-            font-weight: 500;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .message.user {
-            background: #007acc;
-            color: white;
-            align-self: flex-end;
-            margin-left: auto;
-        }
-        
-        .message.agent {
-            background: #2d2d30;
-            color: #cccccc;
-            align-self: flex-start;
-            border: 1px solid #3e3e42;
-        }
-        
-        .message.system {
-            background: #3c3c3c;
-            color: #cccccc;
-            align-self: center;
-            font-style: italic;
-            text-align: center;
-            border: 1px solid #555555;
-        }
-        
-        .message.error {
-            background: #f14c4c;
-            color: white;
-            align-self: center;
-            border: 1px solid #d32f2f;
-        }
-        
-        .message.thinking {
-            background: #007acc;
-            color: white;
-            align-self: center;
-            border: 1px solid #005a9e;
-            animation: pulse 1.5s infinite;
-        }
-        
+
         .input-container {
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            background: var(--color-surface);
+            border-top: 1px solid var(--color-border);
+            transition: background var(--transition-speed) ease, border-color var(--transition-speed) ease;
         }
-        
+
         .input-row {
             display: flex;
-            gap: 10px;
+            gap: 1rem;
             align-items: flex-end;
         }
-        
+
         .input-area {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 0.75rem;
         }
-        
+
         .quick-commands {
             display: flex;
-            gap: 8px;
+            gap: 0.5rem;
             flex-wrap: wrap;
         }
-        
+
         .quick-command {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 4px 8px;
-            border-radius: 12px;
+            background: var(--quick-command-bg);
+            color: var(--color-text-primary);
+            border: 1px solid var(--quick-command-border);
+            padding: 6px 12px;
+            border-radius: 999px;
             cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.2s;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: background var(--transition-speed) ease, transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
         }
-        
+
         .quick-command:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: var(--quick-command-hover);
             transform: translateY(-1px);
+            box-shadow: 0 6px 12px rgba(37, 99, 235, 0.12);
         }
-        
+
         #messageInput {
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            padding: 12px;
-            border-radius: 12px;
+            background: var(--input-bg);
+            color: var(--input-text);
+            border: 1px solid var(--input-border);
+            padding: 14px;
+            border-radius: 14px;
             resize: none;
             outline: none;
             font-family: inherit;
-            font-size: 14px;
-            min-height: 40px;
-            max-height: 120px;
+            font-size: 15px;
+            min-height: 44px;
+            max-height: 160px;
+            transition: border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease, background var(--transition-speed) ease;
         }
-        
+
+        #messageInput::placeholder {
+            color: var(--color-text-secondary);
+        }
+
+        #messageInput:focus {
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
         #sendButton {
-            background: #4CAF50;
-            color: white;
+            background: var(--button-bg);
+            color: var(--button-text);
             border: none;
-            padding: 12px 20px;
-            border-radius: 12px;
+            padding: 14px 24px;
+            border-radius: 14px;
             cursor: pointer;
-            font-weight: bold;
-            transition: all 0.2s;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease, filter var(--transition-speed) ease;
             height: fit-content;
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
         }
-        
+
         #sendButton:hover:not(:disabled) {
-            background: #45a049;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 16px 32px rgba(37, 99, 235, 0.28);
+            filter: brightness(1.05);
         }
-        
+
         #sendButton:disabled {
-            background: #666;
             cursor: not-allowed;
+            opacity: 0.6;
+            box-shadow: none;
         }
-        
+
         .typing-indicator {
             display: none;
             padding: 10px;
             font-style: italic;
-            color: rgba(255, 255, 255, 0.7);
+            color: var(--color-text-secondary);
         }
-        
+
         .typing-indicator.show {
             display: block;
         }
-        
-        .tools-info {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.8);
-        }
-        
-        /* Responsive design */
+
         @media (max-width: 768px) {
+            body {
+                padding: 0 0.75rem 1.5rem;
+            }
+
             .header {
-                padding: 1rem;
                 flex-direction: column;
-                gap: 10px;
+                align-items: stretch;
+                padding: 1.25rem 1.25rem 1rem;
+                margin: 1.25rem auto 0;
+                border-radius: 18px;
             }
-            
+
+            .header-info {
+                align-items: flex-start;
+            }
+
+            .theme-toggle {
+                align-self: flex-start;
+            }
+
+            .status {
+                gap: 0.75rem;
+            }
+
             .chat-container {
-                border-radius: 0;
+                margin: 1.5rem auto 0;
+                border-radius: 20px;
             }
-            
+
+            .messages {
+                padding: 1.5rem;
+            }
+
             .message {
                 max-width: 95%;
             }
-            
+
             .input-container {
-                padding: 15px;
+                padding: 1.25rem;
             }
-            
+
+            .input-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            #sendButton {
+                width: 100%;
+            }
+
             .quick-commands {
                 order: -1;
             }
         }
     </style>
 </head>
-<body>
+
+<body class="theme-dark">
     <div class="header">
         <h1>🤖 DevOps Loop Genie</h1>
         <div class="status">
@@ -466,10 +631,10 @@
             <div class="tools-info" id="toolsInfo">Loading tools...</div>
         </div>
     </div>
-    
+
     <div class="chat-container">
         <div class="messages" id="messages"></div>
-        
+
         <div class="input-container">
             <div class="input-row">
                 <div class="input-area">
@@ -480,11 +645,9 @@
                         <button class="quick-command" onclick="sendCommand('simple')">⚡ Simple</button>
                         <button class="quick-command" onclick="sendCommand('clear')">🧹 Clear</button>
                     </div>
-                    <textarea 
-                        id="messageInput" 
+                    <textarea id="messageInput"
                         placeholder="Type your message here... (Shift+Enter for new line, Enter to send)"
-                        rows="1"
-                    ></textarea>
+                        rows="1"></textarea>
                 </div>
                 <button id="sendButton" onclick="sendMessage()">Send</button>
             </div>
@@ -501,21 +664,120 @@
         const messageInput = document.getElementById('messageInput');
         const sendButton = document.getElementById('sendButton');
         const statusText = document.getElementById('statusText');
+        const statusIndicator = document.querySelector('.status-indicator');
         const modeIndicator = document.getElementById('modeIndicator');
         const toolsInfo = document.getElementById('toolsInfo');
+        const themeToggle = document.getElementById('themeToggle');
+        const themeToggleIcon = document.getElementById('themeToggleIcon');
+        const themeToggleText = document.getElementById('themeToggleText');
+
+        const THEME_STORAGE_KEY = 'mcp-preferred-theme';
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+
+        function getStoredTheme() {
+            try {
+                return localStorage.getItem(THEME_STORAGE_KEY);
+            } catch (error) {
+                console.warn('Unable to access stored theme preference.', error);
+                return null;
+            }
+        }
+
+        function storeTheme(theme) {
+            try {
+                localStorage.setItem(THEME_STORAGE_KEY, theme);
+            } catch (error) {
+                console.warn('Unable to persist theme preference.', error);
+            }
+        }
+
+        function updateThemeToggle(theme) {
+            if (!themeToggle || !themeToggleIcon || !themeToggleText) {
+                return;
+            }
+
+            const isLight = theme === 'light';
+            themeToggle.setAttribute('aria-pressed', isLight ? 'true' : 'false');
+            themeToggleIcon.textContent = isLight ? '🌞' : '🌙';
+            themeToggleText.textContent = isLight ? 'Light Mode' : 'Dark Mode';
+        }
+
+        function applyTheme(theme, persist = true) {
+            const normalizedTheme = theme === 'light' ? 'theme-light' : 'theme-dark';
+            document.body.classList.remove('theme-light', 'theme-dark');
+            document.body.classList.add(normalizedTheme);
+
+            if (persist) {
+                storeTheme(theme);
+            }
+
+            updateThemeToggle(theme);
+        }
+
+        const storedThemePreference = getStoredTheme();
+        const initialTheme = storedThemePreference || (prefersDarkScheme.matches ? 'dark' : 'light');
+        applyTheme(initialTheme, false);
+
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                const nextTheme = document.body.classList.contains('theme-light') ? 'dark' : 'light';
+                applyTheme(nextTheme);
+            });
+        }
+
+        const handleSystemThemeChange = (event) => {
+            if (!getStoredTheme()) {
+                applyTheme(event.matches ? 'dark' : 'light', false);
+            }
+        };
+
+        if (typeof prefersDarkScheme.addEventListener === 'function') {
+            prefersDarkScheme.addEventListener('change', handleSystemThemeChange);
+        } else if (typeof prefersDarkScheme.addListener === 'function') {
+            prefersDarkScheme.addListener(handleSystemThemeChange);
+        }
+
+        function updateConnectionState(state) {
+            const states = ['connecting', 'connected', 'disconnected'];
+            const normalizedState = states.includes(state) ? state : 'connecting';
+
+            if (statusText) {
+                states.forEach((status) => statusText.classList.remove(`status-text--${status}`));
+                statusText.classList.add(`status-text--${normalizedState}`);
+
+                if (normalizedState === 'connected') {
+                    statusText.textContent = 'Connected';
+                } else if (normalizedState === 'disconnected') {
+                    statusText.textContent = 'Disconnected';
+                } else {
+                    statusText.textContent = 'Connecting…';
+                }
+            }
+
+            if (statusIndicator) {
+                states.forEach((status) => statusIndicator.classList.remove(`status-indicator--${status}`));
+                statusIndicator.classList.add(`status-indicator--${normalizedState}`);
+            }
+
+            if (sendButton) {
+                sendButton.disabled = normalizedState !== 'connected';
+            }
+        }
+
+        updateConnectionState('connecting');
 
         // Initialize WebSocket connection
         function connectWebSocket() {
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             const wsUrl = `${protocol}//${window.location.host}`;
-            
+
+            updateConnectionState('connecting');
+
             ws = new WebSocket(wsUrl);
 
             ws.onopen = () => {
                 isConnected = true;
-                statusText.textContent = 'Connected';
-                statusText.style.color = '#4CAF50';
-                sendButton.disabled = false;
+                updateConnectionState('connected');
                 console.log('WebSocket connected');
             };
 
@@ -530,11 +792,9 @@
 
             ws.onclose = () => {
                 isConnected = false;
-                statusText.textContent = 'Disconnected';
-                statusText.style.color = '#f44336';
-                sendButton.disabled = true;
+                updateConnectionState('disconnected');
                 console.log('WebSocket disconnected');
-                
+
                 // Attempt to reconnect after 3 seconds
                 setTimeout(connectWebSocket, 3000);
             };
@@ -567,7 +827,7 @@
                         currentThinkingMessage.remove();
                         currentThinkingMessage = null;
                     }
-                    
+
                     // Check if this chunk should be combined with the previous agent message
                     const lastMessage = messagesContainer.lastElementChild;
                     if (lastMessage && lastMessage.classList.contains('agent')) {
@@ -604,113 +864,113 @@
         function addMessage(type, content) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${type}`;
-            
+
             if (type === 'agent') {
                 messageDiv.innerHTML = formatAgentMessage(content);
             } else {
                 messageDiv.textContent = content;
             }
-            
+
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            
+
             return messageDiv; // Return the element for potential manipulation
         }
 
         function formatAgentMessage(content) {
             // Handle different types of content formatting
             let formatted = content;
-            
+
             // Detect and format JSON output
             if (content.trim().startsWith('{') && content.trim().endsWith('}')) {
                 try {
                     const jsonObj = JSON.parse(content);
                     return `<div class="json-output">${escapeHtml(JSON.stringify(jsonObj, null, 2))}</div>`;
-                } catch(e) {
+                } catch (e) {
                     // Not valid JSON, continue with other formatting
                 }
             }
-            
+
             // Format numbered lists (like "1. ItemName (Type: ABC) 2. ItemName2 (Type: DEF)")
             formatted = formatted.replace(
                 /(\d+)\.\s*([^()]+)(?:\(([^)]+)\))?\s*(?=\d+\.|$)/g,
                 '<div class="numbered-item"><span class="item-number">$1.</span> <span class="item-name">$2</span> <span class="item-type">($3)</span></div>'
             );
-            
+
             // If we found numbered items, wrap them in a container
             if (formatted.includes('numbered-item')) {
                 formatted = `<div class="numbered-list">${formatted}</div>`;
             }
-            
+
             // Format test lists specifically (handle patterns like "Here are all the tests in the DemoLoop project:")
             formatted = formatted.replace(
                 /Here are all the tests in the (\w+) project:\s*(.*)/gi,
                 '<h3>🧪 Tests in the $1 Project:</h3><div class="test-list">$2</div>'
             );
-            
+
             // Format command output blocks
             formatted = formatted.replace(
-                /```(?:bash|shell|cmd)?\n([\s\S]*?)```/g, 
+                /```(?:bash|shell|cmd)?\n([\s\S]*?)```/g,
                 '<div class="command-output">$1</div>'
             );
-            
+
             // Format code blocks
             formatted = formatted.replace(
-                /```(\w+)?\n([\s\S]*?)```/g, 
+                /```(\w+)?\n([\s\S]*?)```/g,
                 '<pre><code>$2</code></pre>'
             );
-            
+
             // Format inline code
             formatted = formatted.replace(/`([^`]+)`/g, '<code>$1</code>');
-            
+
             // Format tool calls (detect patterns like "Running tool: xyz")
             formatted = formatted.replace(
                 /(Running|Using|Executing)\s+(tool|command|function):\s*([^\n]+)/gi,
                 '<div class="tool-call"><span class="tool-name">🔧 $1 $2:</span> $3</div>'
             );
-            
+
             // Format file content (detect patterns indicating file output)
             formatted = formatted.replace(
                 /(File contents?|Reading file):\s*([^\n]*)\n([\s\S]*?)(?=\n\n|\n[A-Z]|\n$|$)/g,
                 '<div class="tool-call"><span class="tool-name">📄 $1:</span> $2</div><div class="file-content">$3</div>'
             );
-            
+
             // Format error messages
             formatted = formatted.replace(
                 /(Error|Failed|Exception):\s*([^\n]+)/gi,
                 '<div class="error-output"><strong>❌ $1:</strong> $2</div>'
             );
-            
+
             // Format step indicators (detect thinking patterns)
             formatted = formatted.replace(
                 /(Let me|I will|I should|Next,?\s*I|Now I|I'll|I'm going to)\s+([^\n]+)/gi,
                 '<div class="step-indicator">🤔 $1 $2</div>'
             );
-            
+
             // Format headers (lines that end with colon and are followed by content)
             formatted = formatted.replace(
                 /^([A-Z][^:\n]{3,}):$/gm,
                 '<h3>$1:</h3>'
             );
-            
+
             // Format simple lists with dashes or asterisks
             formatted = formatted.replace(
                 /^[\s]*[-\*]\s+(.+)$/gm,
                 '<li>$1</li>'
             );
-            
+
             // Wrap consecutive list items in ul tags
             formatted = formatted.replace(
                 /(<li>.*<\/li>(?:\s*<li>.*<\/li>)*)/gs,
                 '<ul>$1</ul>'
             );
-            
+
             // Format numbered lists (simple format like "1. Item")
             formatted = formatted.replace(
                 /^[\s]*(\d+)[\.\)]\s+(.+)$/gm,
                 '<li>$2</li>'
             );
-            
+
             // Convert line breaks to <br> tags, but preserve formatting within special blocks
             const parts = formatted.split(/(<div[^>]*>[\s\S]*?<\/div>|<pre[^>]*>[\s\S]*?<\/pre>|<ul[^>]*>[\s\S]*?<\/ul>|<h\d[^>]*>[\s\S]*?<\/h\d>)/);
             formatted = parts.map((part, index) => {
@@ -722,7 +982,7 @@
                     return part;
                 }
             }).join('');
-            
+
             return formatted;
         }
 
@@ -734,7 +994,7 @@
                 '"': '&quot;',
                 "'": '&#039;'
             };
-            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+            return text.replace(/[&<>"']/g, function (m) { return map[m]; });
         }
 
         function sendMessage() {
@@ -789,7 +1049,7 @@
         // Example prompts for demonstration
         const examplePrompts = [
             "List the files in the current directory",
-            "Analyze the project structure and suggest improvements", 
+            "Analyze the project structure and suggest improvements",
             "Check the system status and resources",
             "Create a backup of important files"
         ];
@@ -816,4 +1076,5 @@
         }, 2000);
     </script>
 </body>
+
 </html>
