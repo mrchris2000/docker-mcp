@@ -42,7 +42,7 @@ export class WebServer {
 
   private setupExpress() {
     this.app.use(express.static(path.join(__dirname, '../web')));
-    
+
     // API endpoint to get available tools
     this.app.get('/api/tools', (req, res) => {
       res.json({
@@ -62,15 +62,15 @@ export class WebServer {
 
     this.wss.on('connection', (ws) => {
       console.log('💬 New WebSocket connection established');
-      
+
       // Initialize conversation history for this connection
       this.conversationHistories.set(ws, []);
       this.enhancedModeSettings.set(ws, true); // Default to enhanced mode
-      
+
       // Send welcome message
       ws.send(JSON.stringify({
         type: 'system',
-        message: '🤖 GitHub Copilot connected! Type your message below.',
+        message: '🤖 Loop Genie connected! Type your message below.',
         tools: Object.keys(this.tools),
         mode: 'enhanced'
       }));
@@ -176,7 +176,7 @@ export class WebServer {
     // Send thinking indicator
     ws.send(JSON.stringify({
       type: 'thinking',
-      message: isEnhanced 
+      message: isEnhanced
         ? `🤔 Processing with ${conversationHistory.length} previous messages (enhanced mode)...`
         : `🤔 Processing with ${conversationHistory.length} previous messages...`
     }));
@@ -186,21 +186,21 @@ export class WebServer {
       let fullResponse = '';
       const originalConsoleLog = console.log;
       let isFirstChunk = true;
-      
+
       console.log = (...args) => {
         const message = args.join(' ');
         if (message && message.trim()) {
           fullResponse += message + '\n';
-          
+
           // Format the message for better presentation
           const formattedMessage = this.formatMessageForWeb(message);
-          
+
           ws.send(JSON.stringify({
             type: 'response_chunk',
             message: formattedMessage,
             isFirst: isFirstChunk
           }));
-          
+
           isFirstChunk = false;
         }
         originalConsoleLog(...args);
@@ -208,10 +208,10 @@ export class WebServer {
 
       // Process the prompt
       const newHistory = await this.processPrompt(
-        prompt, 
-        this.apiKey, 
-        this.baseURL, 
-        conversationHistory, 
+        prompt,
+        this.apiKey,
+        this.baseURL,
+        conversationHistory,
         isEnhanced
       );
 
@@ -240,64 +240,64 @@ export class WebServer {
   private formatMessageForWeb(message: string): string {
     // Enhanced formatting for web display - matching VSCode Copilot patterns
     let formatted = message;
-    
+
     // Detect tool execution patterns (using VSCode Copilot style)
     if (message.includes('shell:') || message.includes('Running command:')) {
       formatted = `�️ **Tool Execution:** ${message}`;
     }
-    
+
     // Detect file operations
     if (message.includes('read_file:') || message.includes('Reading file:')) {
       formatted = `📄 **File Operation:** ${message}`;
     }
-    
+
     if (message.includes('write_file:') || message.includes('Writing to:')) {
       formatted = `✏️ **File Write:** ${message}`;
     }
-    
+
     // Detect MCP tool calls (using VSCode Copilot emoji style)
     if (message.includes('mcp_') || message.startsWith('{') && message.includes('"type"')) {
       formatted = `🛠️ **MCP Tool:** ${message}`;
     }
-    
+
     // Detect analysis or thinking patterns (using VSCode Copilot style)
     const thinkingPatterns = [
       'Let me', 'I will', 'I should', 'I need to', 'I\'ll', 'I\'m going to',
       'Next,', 'Now I', 'To', 'Additionally', 'Furthermore', 'Also',
       'Based on', 'Looking at', 'I can see', 'It appears', 'I notice'
     ];
-    
+
     for (const pattern of thinkingPatterns) {
       if (message.startsWith(pattern)) {
         formatted = `🤔 **Step:** ${message}`;
         break;
       }
     }
-    
+
     // Detect progress messages
-    if (message.includes('Processing') || message.includes('Working on') || 
-        message.includes('Getting ready') || message.includes('Almost ready')) {
+    if (message.includes('Processing') || message.includes('Working on') ||
+      message.includes('Getting ready') || message.includes('Almost ready')) {
       formatted = `⏳ **Progress:** ${message}`;
     }
-    
+
     // Detect warnings or errors
     if (message.includes('Error:') || message.includes('Failed:') || message.includes('Warning:')) {
       formatted = `⚠️ **Notice:** ${message}`;
     }
-    
+
     // Detect successful operations
-    if (message.includes('Successfully') || message.includes('Complete') || 
-        message.includes('Done') || message.includes('Finished')) {
+    if (message.includes('Successfully') || message.includes('Complete') ||
+      message.includes('Done') || message.includes('Finished')) {
       formatted = `✅ **Success:** ${message}`;
     }
     if (message.includes('read_file:') || message.includes('Reading file:')) {
       formatted = `📄 **File Operation:** ${message}`;
     }
-    
+
     if (message.includes('write_file:') || message.includes('Writing to:')) {
       formatted = `✏️ **File Write:** ${message}`;
     }
-    
+
     // Format JSON responses
     try {
       if (message.trim().startsWith('{') && message.trim().endsWith('}')) {
@@ -307,7 +307,7 @@ export class WebServer {
     } catch (e) {
       // Not JSON, continue with original formatting
     }
-    
+
     return formatted;
   }
 
